@@ -11,7 +11,7 @@ const entradas = [
     fecha: '2025-05-28',
     autor: 'Dra. Valentina Mora',
     zona: 'Cuadrante B - Zona Norte',
-    imageUrl: 'https://images.unsplash.com/photo-1555169062-013468b47731?q=80&w=800&auto=format&fit=crop',
+    imageUrl: '/images/quetzal.png',
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const entradas = [
     fecha: '2025-05-22',
     autor: 'M.C. Rodrigo Altamirano',
     zona: 'Corredor Sur',
-    imageUrl: 'https://images.unsplash.com/photo-1582218409332-d85262589495?q=80&w=800&auto=format&fit=crop',
+    imageUrl: '/images/monitoreo_nocturno.png',
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const entradas = [
     fecha: '2025-05-19',
     autor: 'Biol. Ernesto Villanueva',
     zona: 'Laboratorio Acuático',
-    imageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9378?q=80&w=800&auto=format&fit=crop',
+    imageUrl: '/images/calidad_agua_axolotl.png',
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ const entradas = [
     fecha: '2025-05-10',
     autor: 'Equipo de Voluntarios',
     zona: 'Área de Expansión',
-    imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop',
+    imageUrl: '/images/naturaleza.png',
   },
 ]
 

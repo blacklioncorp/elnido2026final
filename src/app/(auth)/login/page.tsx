@@ -31,7 +31,7 @@ export default function LoginPage() {
       {/* Left panel - image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <Image
-          src="https://images.unsplash.com/photo-1582218409332-d85262589495?q=80&w=1974&auto=format&fit=crop"
+          src="/images/jaguar.png"
           alt="Jaguar en El Nido"
           fill
           className="object-cover"

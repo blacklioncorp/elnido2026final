@@ -10,7 +10,7 @@ export default function MarketingHero() {
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.unsplash.com/photo-1555169062-013468b47731?q=80&w=1974&auto=format&fit=crop"
+          src="/images/quetzal.png"
           alt="Quetzal en su hábitat natural"
           fill
           priority
