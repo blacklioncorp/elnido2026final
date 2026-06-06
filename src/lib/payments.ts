@@ -7,7 +7,7 @@ export const DONATION_AMOUNTS = [25, 50, 100, 250] as const;
 export type DonationAmount = (typeof DONATION_AMOUNTS)[number];
 
 export interface DonationPayload {
-  amount: number; // en centavos (USD)
+  amount: number; // en centavos (MXN)
   donorName: string;
   donorEmail: string;
   speciesId?: string;

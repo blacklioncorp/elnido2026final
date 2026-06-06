@@ -22,7 +22,7 @@ export default function AdminPage() {
         <MetricCard title="Especies Registradas" value="12" change="2 este mes" icon={Bird} color="green" />
         <MetricCard title="Guardianes Activos" value="348" change="24 nuevos" icon={Users} color="blue" />
         <MetricCard title="Apadrinamientos" value="521" change="18 esta semana" icon={Heart} color="gold" />
-        <MetricCard title="Recaudado (USD)" value="$24,870" change="$3,200 este mes" icon={DollarSign} color="purple" />
+        <MetricCard title="Recaudado (MXN)" value="$24,870" change="$3,200 este mes" icon={DollarSign} color="purple" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
