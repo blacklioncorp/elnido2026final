@@ -3,7 +3,7 @@
 
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "";
 
-export const DONATION_AMOUNTS = [25, 50, 100, 250] as const;
+export const DONATION_AMOUNTS = [100, 200, 500, 1000] as const;
 export type DonationAmount = (typeof DONATION_AMOUNTS)[number];
 
 export interface DonationPayload {

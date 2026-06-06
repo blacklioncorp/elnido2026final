@@ -109,7 +109,7 @@ function DonationForm({ amount }: { amount: number }) {
 }
 
 export default function DonarPage() {
-  const [selectedAmount, setSelectedAmount] = useState<number>(50)
+  const [selectedAmount, setSelectedAmount] = useState<number>(500)
   const [customAmount, setCustomAmount] = useState('')
 
   const finalAmount = customAmount ? parseFloat(customAmount) || 0 : selectedAmount
@@ -151,8 +151,8 @@ export default function DonarPage() {
                     key={amount}
                     onClick={() => { setSelectedAmount(amount); setCustomAmount('') }}
                     className={`py-3 rounded-xl font-bold text-lg transition-all duration-200 ${selectedAmount === amount && !customAmount
-                        ? 'bg-conservation-gold text-forest-green-dark scale-105 shadow-md shadow-conservation-gold/30'
-                        : 'bg-white/10 text-off-white hover:bg-white/20 border border-white/10'
+                      ? 'bg-conservation-gold text-forest-green-dark scale-105 shadow-md shadow-conservation-gold/30'
+                      : 'bg-white/10 text-off-white hover:bg-white/20 border border-white/10'
                       }`}
                   >
                     ${amount}
