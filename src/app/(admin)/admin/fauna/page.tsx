@@ -1,15 +1,16 @@
-export default function AdminSubPage() {
-  return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-off-white tracking-tight">Gestión de Fauna</h1>
-        <p className="text-off-white/50 mt-1">Administra las especies del santuario</p>
-      </div>
-      <div className="bg-forest-green-light/40 backdrop-blur-sm rounded-2xl border border-white/10 border-dashed p-16 text-center">
-        <p className="text-conservation-gold text-4xl mb-4">🚧</p>
-        <p className="text-off-white font-bold text-lg mb-2">En desarrollo</p>
-        <p className="text-off-white/40 text-sm">Esta sección se conectará a Supabase en la siguiente fase.</p>
-      </div>
-    </div>
-  )
+import { getFauna } from '@/app/actions/fauna'
+import FaunaAdminClient from './FaunaAdminClient'
+import type { Database } from '@/lib/database.types'
+
+export const dynamic = 'force-dynamic'
+
+type Especie = Database['public']['Tables']['fauna']['Row']
+
+export default async function AdminFaunaPage() {
+  let especies: Especie[] = []
+  try {
+    especies = await getFauna()
+  } catch { /* DB no configurada aún */ }
+
+  return <FaunaAdminClient inicial={especies} />
 }

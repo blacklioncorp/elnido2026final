@@ -19,12 +19,19 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
 *   **Blog:** The blog is a place for the sanctuary to share news, stories, and updates with its visitors.
 *   **Contact Page:** The contact page provides a simple way for visitors to get in touch with the sanctuary.
 
+*   **Boletera & POS:** Sistema de venta de boletos, tienda física (POS) y control de cajas.
+*   **Donativos y Especies:** Página de donativos genéricos (`/donar`) y donativos por especie (`/donativos`) procesados con Stripe Checkout y guardados en Supabase.
+*   **Integración N8N:** Webhook unificado en Stripe que notifica automáticamente a N8N cuando se completa un donativo.
+*   **Control de Cupo:** Sistema de límite diario (cupo) para la venta de boletos usando funciones atómicas (RPC) en PostgreSQL.
+*   **Asistente WhatsApp:** Widget flotante en la UI para contactar al santuario vía WhatsApp, con número y mensaje configurables.
+
 ## Recent Changes
 
-*   Created the initial project structure, including the `app`, `components`, and `lib` directories.
-*   Created the main layout, including the header and footer.
-*   Created the home page, including the hero, features, and call to action sections.
-*   Added the color palette and typography to the `globals.css` file.
-*   Fixed a bug that was causing the background color to be inconsistent across the site.
-*   Fixed a bug that was causing the navigation links to be broken.
-*   Created a `blueprint.md` file to document the project.
+*   Implementada la tabla `donaciones` unificada y la tabla `tarjetas_donacion` para el programa "Guardián".
+*   Actualizada la página `/donar` para usar Stripe Checkout unificado (Opción B).
+*   Creada la página `/donativos` con UI interactiva usando Framer Motion y Tailwind CSS.
+*   Implementado control de cupo diario (`cupo_diario`) y procedimiento almacenado `incrementar_cupo`.
+*   Añadida vista de administración (`/admin/configuracion`) para controlar WhatsApp y Webhooks de N8N.
+*   Actualizados los reportes de administración para mostrar ingresos por donativos (especie vs. genérico).
+*   Corregidos los tipos en `database.types.ts` añadiendo relaciones `Relationships` en `ventas_pos` y `compras` para resolver errores de TS con Supabase.
+*   Creado el archivo `N8N_SETUP.md` con la documentación para conectar los flujos de N8N.

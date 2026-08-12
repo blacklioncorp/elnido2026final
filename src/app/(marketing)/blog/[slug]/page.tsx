@@ -3,18 +3,63 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
-import { Clock, ArrowLeft, Tag } from 'lucide-react'
+import { getOptimizedUrl } from '@/lib/utils'
+import { Clock, ArrowLeft, Tag, Calendar } from 'lucide-react'
+import { getPostBySlug } from '@/app/actions/blog'
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }))
-}
+export const dynamic = 'force-dynamic'
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
+
+  // Intentar Supabase primero
+  let dbPost: any = null
+  try {
+    dbPost = await getPostBySlug(slug)
+  } catch { /* fallback */ }
+
+  if (dbPost) {
+    return (
+      <div className="container mx-auto px-4 py-16 max-w-3xl">
+        <Link href="/blog" className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white transition-colors text-sm mb-8">
+          <ArrowLeft className="h-4 w-4" /> Volver al Blog
+        </Link>
+
+        <h1 className="text-3xl md:text-5xl font-extrabold text-off-white tracking-tight leading-tight mb-4">{dbPost.titulo}</h1>
+
+        <div className="flex items-center gap-3 mb-8 pb-8 border-b border-white/10">
+          <div className="flex items-center gap-1.5 text-off-white/40 text-xs">
+            <Calendar className="h-3.5 w-3.5" />{formatDate(dbPost.created_at)}
+          </div>
+        </div>
+
+        {dbPost.imagen_url && (
+          <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden mb-10">
+            <Image src={getOptimizedUrl(dbPost.imagen_url, 'large')} alt={dbPost.titulo} fill className="object-cover" />
+          </div>
+        )}
+
+        <div className="prose prose-invert prose-lg max-w-none">
+          {dbPost.contenido.split('\n\n').map((paragraph: string, i: number) => (
+            <p key={i} className="text-off-white/80 leading-relaxed mb-5">{paragraph}</p>
+          ))}
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-white/10 text-center">
+          <p className="text-off-white/50 mb-4">¿Te interesa apoyar esta causa?</p>
+          <Link href="/donar" className="inline-block bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-bold py-3 px-8 rounded-xl transition-all duration-300 hover:scale-105">
+            Hacer una Donación
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Fallback a datos estáticos
   const post = blogPosts.find((p) => p.slug === slug)
   if (!post) notFound()
 

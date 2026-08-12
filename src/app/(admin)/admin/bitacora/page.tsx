@@ -1,15 +1,46 @@
-export default function AdminSubPage() {
+import { getEntradasBitacora } from '@/app/actions/bitacora'
+import { getFauna } from '@/app/actions/fauna'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
+import BitacoraAdminClient from './BitacoraAdminClient'
+import type { Database } from '@/lib/database.types'
+
+export const dynamic = 'force-dynamic'
+
+type Entrada = Database['public']['Tables']['bitacora']['Row'] & {
+  fauna?: { nombre: string; slug: string } | null
+}
+type Fauna = Pick<Database['public']['Tables']['fauna']['Row'], 'id' | 'nombre'>
+
+export default async function AdminBitacoraPage() {
+  let entradas: Entrada[] = []
+  let faunaList: Fauna[] = []
+  let userId = ''
+  let adminRole: string | null = null
+
+  try {
+    const supabase = await createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    userId = user?.id ?? ''
+
+    if (userId) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('admin_role')
+        .eq('id', userId)
+        .single()
+      adminRole = profile?.admin_role ?? null
+    }
+
+    entradas = await getEntradasBitacora()
+    faunaList = (await getFauna(true)).map(f => ({ id: f.id, nombre: f.nombre }))
+  } catch { /* DB no configurada aún */ }
+
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-off-white tracking-tight">Bitácora de Campo</h1>
-        <p className="text-off-white/50 mt-1">Registros y observaciones del equipo</p>
-      </div>
-      <div className="bg-forest-green-light/40 backdrop-blur-sm rounded-2xl border border-white/10 border-dashed p-16 text-center">
-        <p className="text-conservation-gold text-4xl mb-4">🚧</p>
-        <p className="text-off-white font-bold text-lg mb-2">En desarrollo</p>
-        <p className="text-off-white/40 text-sm">Esta sección se conectará a Supabase en la siguiente fase.</p>
-      </div>
-    </div>
+    <BitacoraAdminClient
+      inicial={entradas}
+      faunaList={faunaList}
+      userId={userId}
+      adminRole={adminRole}
+    />
   )
 }

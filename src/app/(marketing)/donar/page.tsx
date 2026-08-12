@@ -1,50 +1,45 @@
 'use client'
 
 import { useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import { STRIPE_PUBLISHABLE_KEY, DONATION_AMOUNTS } from '@/lib/payments'
+import { useRouter } from 'next/navigation'
+import { DONATION_AMOUNTS } from '@/lib/payments'
 import { formatCurrency } from '@/lib/utils'
 import { toast } from 'sonner'
-import { Shield, Heart, Leaf } from 'lucide-react'
-
-// Load stripe - key will be empty in demo mode
-const stripePromise = STRIPE_PUBLISHABLE_KEY
-  ? loadStripe(STRIPE_PUBLISHABLE_KEY)
-  : null
-
-const CARD_ELEMENT_OPTIONS = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: '#F7F3E8',
-      fontFamily: '"Inter", sans-serif',
-      '::placeholder': { color: '#F7F3E8' + '60' },
-      iconColor: '#D4A843',
-    },
-    invalid: { color: '#ef4444', iconColor: '#ef4444' },
-  },
-}
+import { Shield, Heart, Leaf, Loader2 } from 'lucide-react'
+import { createDonacionGenericaCheckout } from '@/app/actions/donaciones'
 
 function DonationForm({ amount }: { amount: number }) {
-  const stripe = useStripe()
-  const elements = useElements()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [esRecurrente, setEsRecurrente] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!stripe || !elements) {
-      toast.error('Stripe no está disponible. Configura NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.')
+    
+    if (amount <= 0) {
+      toast.error('El monto debe ser mayor a cero.')
       return
     }
+
     setLoading(true)
-    // TODO: Crear PaymentIntent desde el servidor y confirmar aquí
-    // const { error, paymentMethod } = await stripe.createPaymentMethod({ ... })
-    await new Promise((r) => setTimeout(r, 1500))
-    toast.success(`¡Gracias, ${name || 'guardián'}! Tu donación de ${formatCurrency(amount)} está siendo procesada.`)
-    setLoading(false)
+    
+    const result = await createDonacionGenericaCheckout({
+      nombre: name,
+      email: email,
+      monto: amount,
+      esRecurrente,
+    })
+
+    if ('error' in result) {
+      toast.error(result.error)
+      setLoading(false)
+      return
+    }
+
+    // Redirigir a Stripe Checkout
+    router.push(result.url)
   }
 
   return (
@@ -73,15 +68,22 @@ function DonationForm({ amount }: { amount: number }) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-off-white/80 mb-1.5">Información de Pago</label>
-        <div className="px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 focus-within:border-conservation-gold focus-within:ring-1 focus-within:ring-conservation-gold transition-colors">
-          <CardElement options={CARD_ELEMENT_OPTIONS} />
-        </div>
-        {!STRIPE_PUBLISHABLE_KEY && (
-          <p className="mt-2 text-xs text-conservation-gold/80 flex items-center gap-1">
-            <span>⚠</span> Modo demo — configura NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY para procesar pagos reales
-          </p>
-        )}
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={esRecurrente}
+            onChange={(e) => setEsRecurrente(e.target.checked)}
+            className="mt-1 h-5 w-5 rounded border-white/20 bg-white/10 text-conservation-gold focus:ring-conservation-gold accent-conservation-gold flex-shrink-0"
+          />
+          <div className="flex-1">
+            <span className="block font-bold text-off-white mb-0.5">
+              ☑️ Hacer este donativo mensual
+            </span>
+            <span className="block text-xs text-off-white/60 leading-relaxed">
+              Tu donativo se renovará automáticamente cada mes. Puedes cancelar cuando quieras.
+            </span>
+          </div>
+        </label>
       </div>
 
       <button
@@ -91,16 +93,13 @@ function DonationForm({ amount }: { amount: number }) {
       >
         {loading ? (
           <span className="flex items-center gap-2">
-            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
+            <Loader2 className="animate-spin h-5 w-5" />
             Procesando...
           </span>
         ) : (
           <>
             <Heart className="h-5 w-5" />
-            Donar {formatCurrency(amount)}
+            {esRecurrente ? `Donar ${formatCurrency(amount)}/mes` : `Donar ${formatCurrency(amount)}`}
           </>
         )}
       </button>
@@ -131,7 +130,7 @@ export default function DonarPage() {
               {[
                 { icon: <Leaf className="h-5 w-5 mx-auto mb-1 text-conservation-gold" />, label: '100% para conservación' },
                 { icon: <Shield className="h-5 w-5 mx-auto mb-1 text-conservation-gold" />, label: 'Pago seguro con Stripe' },
-                { icon: <Heart className="h-5 w-5 mx-auto mb-1 text-conservation-gold" />, label: 'Recibo deducible' },
+                { icon: <Heart className="h-5 w-5 mx-auto mb-1 text-conservation-gold" />, label: 'Impacto directo' },
               ].map((item) => (
                 <div key={item.label}>
                   {item.icon}
@@ -169,10 +168,7 @@ export default function DonarPage() {
               />
             </div>
 
-            {/* Stripe form */}
-            <Elements stripe={stripePromise}>
-              <DonationForm amount={finalAmount} />
-            </Elements>
+            <DonationForm amount={finalAmount} />
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Mail, MapPin, Phone, Send } from 'lucide-react'
+import { enviarMensajeContacto } from '@/app/actions/contacto'
 
 export default function ContactoPage() {
   const [loading, setLoading] = useState(false)
@@ -11,16 +12,21 @@ export default function ContactoPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // TODO: Enviar con Resend
-    // await resend.emails.send({
-    //   from: 'contacto@elnido.mx',
-    //   to: 'info@elnido.mx',
-    //   subject: form.subject,
-    //   text: `De: ${form.name} <${form.email}>\n\n${form.message}`,
-    // })
-    await new Promise((r) => setTimeout(r, 1200))
-    toast.success('Mensaje enviado. Nos pondremos en contacto contigo pronto.')
-    setForm({ name: '', email: '', subject: '', message: '' })
+    
+    const formData = new FormData()
+    formData.append('name', form.name)
+    formData.append('email', form.email)
+    formData.append('subject', form.subject)
+    formData.append('message', form.message)
+
+    const result = await enviarMensajeContacto(formData)
+
+    if (result.success) {
+      toast.success('Mensaje enviado. Nos pondremos en contacto contigo pronto.')
+      setForm({ name: '', email: '', subject: '', message: '' })
+    } else {
+      toast.error(result.error || 'No se pudo enviar el mensaje.')
+    }
     setLoading(false)
   }
 
@@ -41,8 +47,8 @@ export default function ContactoPage() {
         <div className="lg:col-span-2 space-y-8">
           {[
             { icon: Mail, label: 'Correo', value: 'info@elnido.mx' },
-            { icon: Phone, label: 'Teléfono', value: '+52 (55) 1234-5678' },
-            { icon: MapPin, label: 'Ubicación', value: 'Chiapas, México' },
+            { icon: Phone, label: 'Teléfono', value: '(56) 2160 0230' },
+            { icon: MapPin, label: 'Ubicación', value: 'Calle Progreso s/n esquina av. Acozac, Ixtapaluca Centro, Ixtapaluca, Estado de México.' },
           ].map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex items-start gap-4">
               <div className="p-3 rounded-xl bg-conservation-gold/10 border border-conservation-gold/20">
@@ -95,11 +101,6 @@ export default function ContactoPage() {
               : <><Send className="h-5 w-5" /> Enviar Mensaje</>
             }
           </button>
-          <p className="text-xs text-center text-off-white/30">
-            Al enviar, configura{' '}
-            <code className="bg-white/10 px-1 rounded text-conservation-gold">RESEND_API_KEY</code>
-            {' '}en .env.local para activar el envío real.
-          </p>
         </form>
       </div>
     </div>

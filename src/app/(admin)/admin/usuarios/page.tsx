@@ -1,15 +1,22 @@
-export default function AdminSubPage() {
-  return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-off-white tracking-tight">Usuarios</h1>
-        <p className="text-off-white/50 mt-1">Administra los guardianes registrados</p>
-      </div>
-      <div className="bg-forest-green-light/40 backdrop-blur-sm rounded-2xl border border-white/10 border-dashed p-16 text-center">
-        <p className="text-conservation-gold text-4xl mb-4">🚧</p>
-        <p className="text-off-white font-bold text-lg mb-2">En desarrollo</p>
-        <p className="text-off-white/40 text-sm">Esta sección se conectará a Supabase en la siguiente fase.</p>
-      </div>
-    </div>
-  )
+import { getUsuariosAdmin } from '@/app/actions/usuarios'
+import UsuariosClient from './UsuariosClient'
+
+export const dynamic = 'force-dynamic'
+
+interface Usuario {
+  id: string
+  full_name: string | null
+  email: string | null
+  admin_role: string | null
+  activo: boolean
+  created_at: string
+}
+
+export default async function AdminUsuariosPage() {
+  let usuarios: Usuario[] = []
+  try {
+    usuarios = (await getUsuariosAdmin()) as Usuario[]
+  } catch { /* DB no configurada aún */ }
+
+  return <UsuariosClient inicial={usuarios} />
 }

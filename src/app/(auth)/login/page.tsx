@@ -5,6 +5,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { createClient } from '@/lib/supabase'
+import { loginWithPassword } from '@/app/actions/auth'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -12,18 +15,40 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  const router = useRouter()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // TODO: await supabase.auth.signInWithPassword({ email, password })
-    await new Promise((r) => setTimeout(r, 1200))
-    toast.error('Autenticación no configurada. Conecta Supabase para habilitar el login.')
+    
+    const formData = new FormData()
+    formData.append('email', email)
+    formData.append('password', password)
+    
+    const result = await loginWithPassword(null, formData)
+    
+    if (!result.success) {
+      toast.error(result.error)
+    } else {
+      toast.success('Sesión iniciada correctamente')
+      router.push('/admin') // o la ruta que corresponda, proxy.ts redirigirá si es necesario
+    }
+    
     setLoading(false)
   }
 
-  const handleGoogleLogin = () => {
-    // TODO: await supabase.auth.signInWithOAuth({ provider: 'google' })
-    toast.info('Login con Google disponible cuando conectes Supabase.')
+  const handleGoogleLogin = async () => {
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    })
+    
+    if (error) {
+      toast.error('Error al iniciar sesión con Google')
+    }
   }
 
   return (

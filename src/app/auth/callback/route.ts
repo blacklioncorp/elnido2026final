@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
+import { createAdminSupabaseClient } from '@/lib/supabase-server'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -30,11 +31,17 @@ export async function GET(request: NextRequest) {
 
     if (!error && data.user) {
       // Redirigir segun rol
-      const { data: profile } = await supabase
-        .from('profiles').select('role').eq('id', data.user.id).single()
-      const role = (profile as any)?.role ?? 'guardian'
-      const dest = (role === 'admin' || role === 'super_admin') ? '/admin' : '/guardián'
-      return NextResponse.redirect(new URL(dest, origin))
+      const adminSupabase = await createAdminSupabaseClient()
+      const { data: perfil } = await adminSupabase
+        .from('profiles')
+        .select('role, admin_role')
+        .eq('id', data.user.id)
+        .single()
+
+      if (perfil?.admin_role || perfil?.role === 'super_admin' || perfil?.role === 'admin') {
+        return NextResponse.redirect(new URL('/admin', request.url))
+      }
+      return NextResponse.redirect(new URL('/guardian', request.url))
     }
   }
 

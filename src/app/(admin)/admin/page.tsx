@@ -1,13 +1,7 @@
 import MetricCard from '@/components/admin/MetricCard'
 import { Bird, Heart, Users, DollarSign, TrendingUp, Calendar } from 'lucide-react'
 
-const recentActivity = [
-  { user: 'Ana García', action: 'Apadrinó al Quetzal', time: 'hace 5 min', amount: '$50' },
-  { user: 'Carlos Ruiz', action: 'Donación general', time: 'hace 23 min', amount: '$100' },
-  { user: 'María López', action: 'Apadrinó al Axolotl', time: 'hace 1 hora', amount: '$25' },
-  { user: 'Pedro Soto', action: 'Apadrinó al Jaguar', time: 'hace 2 horas', amount: '$250' },
-  { user: 'Laura Méndez', action: 'Donación general', time: 'hace 3 horas', amount: '$75' },
-]
+const recentActivity: any[] = []
 
 export default function AdminPage() {
   return (
@@ -19,10 +13,10 @@ export default function AdminPage() {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-10">
-        <MetricCard title="Especies Registradas" value="12" change="2 este mes" icon={Bird} color="green" />
-        <MetricCard title="Guardianes Activos" value="348" change="24 nuevos" icon={Users} color="blue" />
-        <MetricCard title="Apadrinamientos" value="521" change="18 esta semana" icon={Heart} color="gold" />
-        <MetricCard title="Recaudado (MXN)" value="$24,870" change="$3,200 este mes" icon={DollarSign} color="purple" />
+        <MetricCard title="Especies Registradas" value="0" change="Sin cambios" icon={Bird} color="green" />
+        <MetricCard title="Guardianes Activos" value="0" change="Sin cambios" icon={Users} color="blue" />
+        <MetricCard title="Apadrinamientos" value="0" change="Sin cambios" icon={Heart} color="gold" />
+        <MetricCard title="Recaudado (MXN)" value="$0" change="Sin cambios" icon={DollarSign} color="purple" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -33,20 +27,26 @@ export default function AdminPage() {
             <TrendingUp className="h-5 w-5 text-off-white/30" />
           </div>
           <div className="space-y-4">
-            {recentActivity.map((item, i) => (
-              <div key={i} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-quetzal-blue/30 flex items-center justify-center text-xs font-bold text-white">
-                    {item.user[0]}
-                  </div>
-                  <div>
-                    <p className="text-off-white text-sm font-medium">{item.user}</p>
-                    <p className="text-off-white/40 text-xs">{item.action} · {item.time}</p>
-                  </div>
-                </div>
-                <span className="text-conservation-gold font-bold text-sm">{item.amount}</span>
+            {recentActivity.length === 0 ? (
+              <div className="py-8 text-center text-off-white/50 text-sm">
+                No hay actividad reciente.
               </div>
-            ))}
+            ) : (
+              recentActivity.map((item, i) => (
+                <div key={i} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-quetzal-blue/30 flex items-center justify-center text-xs font-bold text-white">
+                      {item.user[0]}
+                    </div>
+                    <div>
+                      <p className="text-off-white text-sm font-medium">{item.user}</p>
+                      <p className="text-off-white/40 text-xs">{item.action} · {item.time}</p>
+                    </div>
+                  </div>
+                  <span className="text-conservation-gold font-bold text-sm">{item.amount}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
