@@ -52,7 +52,14 @@ export function getOptimizedUrl(originalUrl: string | null | undefined, size: 'c
   
   try {
     const url = new URL(originalUrl)
-    const pathname = url.pathname
+    let pathname = url.pathname
+    
+    // Si ya termina en -original.webp, lo reemplazamos directamente
+    if (pathname.endsWith('-original.webp')) {
+      url.pathname = pathname.replace('-original.webp', `-${size}.webp`)
+      return url.toString()
+    }
+
     const lastDotIndex = pathname.lastIndexOf('.')
     if (lastDotIndex !== -1) {
       const pathWithoutExt = pathname.substring(0, lastDotIndex)
@@ -60,6 +67,9 @@ export function getOptimizedUrl(originalUrl: string | null | undefined, size: 'c
       return url.toString()
     }
   } catch (e) {
+    if (originalUrl.endsWith('-original.webp')) {
+      return originalUrl.replace('-original.webp', `-${size}.webp`)
+    }
     // Si no es URL válida o falla el parsing, intentamos por regex básico
     return originalUrl.replace(/\.[^/.]+$/, `-${size}.webp`)
   }

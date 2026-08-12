@@ -77,11 +77,20 @@ export default function FaunaAdminClient({ inicial }: Props) {
     setFileName(`${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`)
     setUploadingImg(true)
     const fd = new FormData(); fd.append('file', file)
-    const res = await uploadFaunaImagen(fd)
-    setUploadingImg(false)
-    if ('error' in res) { toast.error(res.error); return }
-    setForm(f => ({ ...f, imagen_url: res.url }))
-    toast.success('Imagen subida ✓')
+    try {
+      const res = await uploadFaunaImagen(fd)
+      if ('error' in res) { 
+        toast.error(res.error)
+        return 
+      }
+      setForm(f => ({ ...f, imagen_url: res.url }))
+      toast.success('Imagen subida ✓')
+    } catch (error: any) {
+      console.error('Error uploading image:', error)
+      toast.error(error.message || 'Error inesperado al subir la imagen. Verifica tu conexión y el tamaño.')
+    } finally {
+      setUploadingImg(false)
+    }
   }
 
   function handleSubmit(e: React.FormEvent) {
