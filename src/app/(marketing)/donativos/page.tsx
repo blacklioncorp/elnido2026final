@@ -67,5 +67,19 @@ export default async function DonativosPage() {
 
   const videoUrl = config?.valor;
 
-  return <DonativosClient tarjetas={tarjetas ?? []} donantesMap={donantesMap} videoUrl={videoUrl} />
+  // Fetch background image
+  let headerImage = undefined;
+  const { data: files } = await supabase.storage.from('especies').list()
+  if (files && files.length > 0) {
+    const images = files.filter(f => f.name.match(/\.(webp|jpg|jpeg|png)$/i))
+    if (images.length > 0) {
+      const cardImages = images.filter(f => f.name.includes('-card'))
+      const pool = cardImages.length > 0 ? cardImages : images
+      const randomImage = pool[Math.floor(Math.random() * pool.length)].name
+      const { data } = supabase.storage.from('especies').getPublicUrl(randomImage)
+      headerImage = data.publicUrl
+    }
+  }
+
+  return <DonativosClient tarjetas={tarjetas ?? []} donantesMap={donantesMap} videoUrl={videoUrl} headerImage={headerImage} />
 }

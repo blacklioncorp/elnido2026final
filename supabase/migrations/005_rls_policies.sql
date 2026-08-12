@@ -213,6 +213,11 @@ ALTER TABLE configuracion ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "configuracion_all" ON configuracion;
 CREATE POLICY "configuracion_all" ON configuracion FOR ALL USING (is_admin());
 
+DROP POLICY IF EXISTS "configuracion_public_read_whatsapp" ON configuracion;
+CREATE POLICY "configuracion_public_read_whatsapp" ON configuracion
+  FOR SELECT
+  USING (clave IN ('whatsapp_numero', 'whatsapp_mensaje'));
+
 -- =====================================================================
 -- 5. USUARIOS (auth.users)
 -- =====================================================================

@@ -6,6 +6,7 @@ import { Heart, ExternalLink } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 import TarjetaDonacion from '@/components/donativos/TarjetaDonacion'
 import VideoTestimonial from '@/components/home/VideoTestimonial'
+import Image from 'next/image'
 
 type TarjetaDonacionRow = Database['public']['Tables']['tarjetas_donacion']['Row']
 
@@ -20,6 +21,7 @@ interface DonativosClientProps {
   tarjetas: TarjetaDonacionRow[]
   donantesMap: Record<string, Donante[]>
   videoUrl?: string | null
+  headerImage?: string
 }
 
 import type { Variants } from 'framer-motion'
@@ -38,25 +40,37 @@ const cardVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 25 } },
 }
 
-export default function DonativosClient({ tarjetas, donantesMap, videoUrl }: DonativosClientProps) {
+export default function DonativosClient({ tarjetas, donantesMap, videoUrl, headerImage }: DonativosClientProps) {
   return (
     <div className="min-h-screen bg-off-white">
       {/* ── HERO ── */}
       <section
         className="relative px-4 py-24 text-center overflow-hidden"
-        style={{
+        style={!headerImage ? {
           background: 'linear-gradient(160deg, #0B2B26 0%, #1A4A3A 50%, #0B2B26 100%)',
-        }}
+        } : undefined}
       >
+        {headerImage && (
+          <Image
+            src={headerImage}
+            alt="Hero Background"
+            fill
+            className="object-cover blur-[3px] z-0"
+            priority
+          />
+        )}
+        {headerImage && (
+          <div className="absolute inset-0 bg-forest-green-dark/80 z-10" />
+        )}
         {/* Decorative circles */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-conservation-gold/5 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-quetzal-blue/5 blur-3xl pointer-events-none" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-conservation-gold/5 blur-3xl pointer-events-none z-10" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-quetzal-blue/5 blur-3xl pointer-events-none z-10" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="relative z-10 max-w-3xl mx-auto"
+          className="relative z-20 max-w-3xl mx-auto drop-shadow-lg"
         >
           <div className="inline-flex items-center gap-2 bg-conservation-gold/15 border border-conservation-gold/30 text-conservation-gold text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             <Heart className="h-3 w-3 fill-conservation-gold" />
@@ -81,7 +95,7 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl }: Don
         </motion.div>
 
         {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
+        <div className="absolute bottom-0 left-0 right-0 z-20">
           <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
             <path d="M0 60V30C360 0 720 60 1080 30L1440 0V60H0Z" fill={videoUrl ? "#0B2B26" : "#F7F3E8"} />
           </svg>

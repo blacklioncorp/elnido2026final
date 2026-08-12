@@ -7,8 +7,11 @@ import GrupoCard from './GrupoCard'
 import CalculadoraCotizacion from './CalculadoraCotizacion'
 import { cn } from '@/lib/utils'
 
+import Image from 'next/image'
+
 interface Props {
   paquetes: PaqueteEducativo[]
+  headerImage?: string
 }
 
 const NIVELES = [
@@ -20,7 +23,7 @@ const NIVELES = [
   { id: 'licenciatura', label: '🦉 Licenciatura' },
 ]
 
-export default function GruposClient({ paquetes }: Props) {
+export default function GruposClient({ paquetes, headerImage }: Props) {
   const [filtro, setFiltro] = useState<string>('todos')
   const [selectedPaqueteId, setSelectedPaqueteId] = useState<string | undefined>()
   const calculadoraRef = useRef<HTMLDivElement>(null)
@@ -40,26 +43,35 @@ export default function GruposClient({ paquetes }: Props) {
     <div className="min-h-screen bg-forest-green-dark">
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
+        {headerImage && (
+          <Image
+            src={headerImage}
+            alt="Hero Background"
+            fill
+            className="object-cover blur-[3px] z-0"
+            priority
+          />
+        )}
         {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-forest-green-dark via-forest-green-dark/90 to-quetzal-blue/20" />
+        <div className={cn("absolute inset-0 z-10", headerImage ? "bg-forest-green-dark/80" : "bg-gradient-to-b from-forest-green-dark via-forest-green-dark/90 to-quetzal-blue/20")} />
         
         {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-quetzal-blue/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-conservation-gold/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-quetzal-blue/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 z-10" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-conservation-gold/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3 z-10" />
 
-        <div className="relative container mx-auto text-center max-w-4xl z-10">
+        <div className="relative container mx-auto text-center max-w-4xl z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block py-1 px-3 rounded-full bg-white/10 text-conservation-gold text-sm font-semibold mb-6 border border-white/10">
+            <span className="inline-block py-1 px-3 rounded-full bg-white/10 text-conservation-gold text-sm font-semibold mb-6 border border-white/10 shadow-sm">
               Programas Escolares
             </span>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-off-white mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-off-white mb-6 leading-tight drop-shadow-md">
               Experiencias Educativas en <span className="text-conservation-gold">El Nido</span>
             </h1>
-            <p className="text-lg md:text-xl text-off-white/80 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-off-white/80 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow">
               Paquetes diseñados para escuelas, desde preescolar hasta universidad. Transforma tu visita en un aprendizaje vivencial e inolvidable.
             </p>
             

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 
 import { cn } from '@/lib/utils';
+import MobileMenu from './MobileMenu';
 
 const navLinks = [
   { href: '/fauna', label: 'Fauna' },
@@ -48,6 +49,7 @@ export default function Header() {
   }
 
   return (
+    <>
     <header className="fixed top-0 z-50 h-20 w-full bg-forest-green-dark/80 backdrop-blur-xl border-b border-white/10">
       <nav className="container mx-auto flex h-full items-center justify-between px-4">
         <Link href="/" className="flex-shrink-0">
@@ -111,5 +113,7 @@ export default function Header() {
         </div>
       </nav>
     </header>
+    <MobileMenu />
+    </>
   );
 }

@@ -16,7 +16,7 @@ interface WhatsAppConfig {
 }
 
 const DEFAULTS: WhatsAppConfig = {
-  numero: '521XXXXXXXXXX',
+  numero: '525621600230',
   mensaje: 'Hola, quiero información sobre El Nido 🦜',
 }
 
@@ -52,10 +52,7 @@ export default function WhatsAppWidget() {
   const handleClick = () => {
     const numero = config.numero.replace(/\D/g, '')
     const mensaje = encodeURIComponent(config.mensaje)
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-    const url = isMobile
-      ? `whatsapp://send?phone=${numero}&text=${mensaje}`
-      : `https://web.whatsapp.com/send?phone=${numero}&text=${mensaje}`
+    const url = `https://wa.me/${numero}?text=${mensaje}`
     window.open(url, '_blank', 'noopener noreferrer')
   }
 

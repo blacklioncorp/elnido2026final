@@ -19,7 +19,21 @@ export default async function GruposPage() {
     .eq('activo', true)
     .order('created_at', { ascending: true })
 
+  // Obtener imagen aleatoria para el header
+  let headerImage = undefined;
+  const { data: files } = await supabase.storage.from('especies').list()
+  if (files && files.length > 0) {
+    const images = files.filter(f => f.name.match(/\.(webp|jpg|jpeg|png)$/i))
+    if (images.length > 0) {
+      const cardImages = images.filter(f => f.name.includes('-card'))
+      const pool = cardImages.length > 0 ? cardImages : images
+      const randomImage = pool[Math.floor(Math.random() * pool.length)].name
+      const { data } = supabase.storage.from('especies').getPublicUrl(randomImage)
+      headerImage = data.publicUrl
+    }
+  }
+
   return (
-    <GruposClient paquetes={(paquetes || []) as PaqueteEducativo[]} />
+    <GruposClient paquetes={(paquetes || []) as PaqueteEducativo[]} headerImage={headerImage} />
   )
 }
