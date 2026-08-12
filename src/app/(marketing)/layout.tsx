@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/marketing/Footer';
 import WhatsAppWidget from '@/components/chatbot/WhatsAppWidget';
+import MobileMenu from '@/components/layout/MobileMenu'; // ← Añadir esto
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
       <main className="flex-1 pt-20">{children}</main>
       <Footer />
       <WhatsAppWidget />
+      <MobileMenu /> {/* ← Añadir esto */}
     </div>
   );
 }

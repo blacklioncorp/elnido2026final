@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 
 import { cn } from '@/lib/utils';
-import MobileMenu from './MobileMenu';
 
 const navLinks = [
   { href: '/fauna', label: 'Fauna' },
@@ -113,7 +112,6 @@ export default function Header() {
         </div>
       </nav>
     </header>
-    <MobileMenu />
     </>
   );
 }
