@@ -51,7 +51,7 @@ export default function Header() {
     <header className="fixed top-0 z-50 h-20 w-full bg-forest-green-dark/80 backdrop-blur-xl border-b border-white/10">
       <nav className="container mx-auto flex h-full items-center justify-between px-4">
         <Link href="/" className="flex-shrink-0">
-          <Image src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/icon_logo.png" alt="El Nido" width={120} height={40} className="object-contain" style={{ width: 'auto', height: '36px' }} />
+          <Image src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/LOGO-ELNIDO-blanco.webp" alt="El Nido" width={120} height={40} className="object-contain" style={{ width: 'auto', height: '36px' }} />
         </Link>
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map(({ href, label }) => (

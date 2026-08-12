@@ -80,7 +80,7 @@ export default function SidebarClient({ userName, userEmail, adminRole }: Props)
         <Link href="/" className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-off-white">
             <Image
-              src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/icon_logo.png"
+              src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/LOGO-ELNIDO-blanco.webp"
               alt="Icono" width={32} height={32} className="object-cover"
             />
           </div>

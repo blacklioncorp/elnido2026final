@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-1">
-            <Image src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/icon_logo.png" alt="El Nido" width={100} height={36} className="mb-4 object-contain" style={{ width: 'auto', height: '36px' }} />
+            <Image src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/LOGO-ELNIDO-blanco.webp" alt="El Nido" width={100} height={36} className="mb-4 object-contain" style={{ width: 'auto', height: '36px' }} />
             <p className="text-off-white/50 text-sm leading-relaxed">Un santuario dedicado a la conservación de la fauna mexicana en peligro de extinción.</p>
           </div>
 
