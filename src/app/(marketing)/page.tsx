@@ -14,19 +14,13 @@ export default async function HomePage() {
 
   const videoUrl = config?.valor;
 
-  let heroImages: string[] = [];
-  try {
-    const { data: imageFiles, error: storageError } = await supabase.storage.from("especies").list();
-    if (!storageError && imageFiles) {
-      const validExtensions = [".webp", ".jpg", ".jpeg", ".png"];
-      heroImages = imageFiles
-        .filter((file) => validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext)))
-        .slice(0, 5)
-        .map((file) => supabase.storage.from("especies").getPublicUrl(file.name).data.publicUrl);
-    }
-  } catch (error) {
-    console.error("Error cargando imágenes del Hero:", error);
-  }
+  const heroImages: string[] = [
+    "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Quetzal-Chucho.svg",
+    "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Guacamaya-Jacinta.svg",
+    "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Flamingo.svg",
+    "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Jaguar-(Samba).svg",
+    "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/tucan.webp"
+  ];
 
   return (
     <>
