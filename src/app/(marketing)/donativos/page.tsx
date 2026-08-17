@@ -15,16 +15,28 @@ export default async function DonativosPage() {
   // Track views in background
   incrementarVistasTarjetas()
 
-  // Fetch active cards (max 5)
-  const { data: tarjetas } = await supabase
+  // Fetch active cards (Amigos)
+  const { data: tarjetasAmigos } = await supabase
     .from('tarjetas_donacion')
     .select('*')
     .eq('activa', true)
+    .eq('seccion', 'amigos')
     .order('created_at', { ascending: false })
     .limit(5)
 
+  // Fetch active cards (Impulsa el Vuelo)
+  const { data: tarjetasImpulsa } = await supabase
+    .from('tarjetas_donacion')
+    .select('*')
+    .eq('activa', true)
+    .eq('seccion', 'impulsa_vuelo')
+    .order('created_at', { ascending: false })
+    .limit(5)
+
+  const todasLasTarjetas = [...(tarjetasAmigos ?? []), ...(tarjetasImpulsa ?? [])]
+
   // Fetch recent donors for each active card
-  const tarjetaIds = (tarjetas ?? []).map((t) => t.id)
+  const tarjetaIds = todasLasTarjetas.map((t) => t.id)
 
   const donantesMap: Record<
     string,
@@ -69,5 +81,13 @@ export default async function DonativosPage() {
 
   const headerImage = "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/plumas-Himalayo.svg";
 
-  return <DonativosClient tarjetas={tarjetas ?? []} donantesMap={donantesMap} videoUrl={videoUrl} headerImage={headerImage} />
+  return (
+    <DonativosClient 
+      tarjetasAmigos={tarjetasAmigos ?? []} 
+      tarjetasImpulsa={tarjetasImpulsa ?? []} 
+      donantesMap={donantesMap} 
+      videoUrl={videoUrl} 
+      headerImage={headerImage} 
+    />
+  )
 }

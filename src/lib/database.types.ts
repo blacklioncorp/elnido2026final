@@ -73,6 +73,15 @@ export type Database = {
           activo: boolean
           created_at: string
           updated_at: string
+          seccion?: string | null
+          latitud_origen?: number | null
+          longitud_origen?: number | null
+          latitud_destino?: number | null
+          longitud_destino?: number | null
+          area_protegida?: string | null
+          latitud_actual?: number | null
+          longitud_actual?: number | null
+          liberada?: boolean | null
         }
         Insert: {
           id?: string
@@ -87,6 +96,15 @@ export type Database = {
           activo?: boolean
           created_at?: string
           updated_at?: string
+          seccion?: string | null
+          latitud_origen?: number | null
+          longitud_origen?: number | null
+          latitud_destino?: number | null
+          longitud_destino?: number | null
+          area_protegida?: string | null
+          latitud_actual?: number | null
+          longitud_actual?: number | null
+          liberada?: boolean | null
         }
         Update: {
           nombre?: string
@@ -99,6 +117,15 @@ export type Database = {
           galeria?: string[]
           activo?: boolean
           updated_at?: string
+          seccion?: string | null
+          latitud_origen?: number | null
+          longitud_origen?: number | null
+          latitud_destino?: number | null
+          longitud_destino?: number | null
+          area_protegida?: string | null
+          latitud_actual?: number | null
+          longitud_actual?: number | null
+          liberada?: boolean | null
         }
         Relationships: []
       }
@@ -641,6 +668,50 @@ export type Database = {
           regalos_entregados?: number
         }
         Relationships: []
+      }
+      actualizaciones_liberacion: {
+        Row: {
+          id: string
+          tarjeta_id: string | null
+          fecha: string
+          titulo: string
+          descripcion: string
+          latitud: number | null
+          longitud: number | null
+          imagen_url: string | null
+          es_destacada: boolean | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          tarjeta_id?: string | null
+          fecha?: string
+          titulo: string
+          descripcion: string
+          latitud?: number | null
+          longitud?: number | null
+          imagen_url?: string | null
+          es_destacada?: boolean | null
+          created_at?: string
+        }
+        Update: {
+          tarjeta_id?: string | null
+          fecha?: string
+          titulo?: string
+          descripcion?: string
+          latitud?: number | null
+          longitud?: number | null
+          imagen_url?: string | null
+          es_destacada?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "actualizaciones_liberacion_tarjeta_id_fkey"
+            columns: ["tarjeta_id"]
+            referencedRelation: "tarjetas_donacion"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       tarjetas_donacion: {
         Row: {

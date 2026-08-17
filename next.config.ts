@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https://api.stripe.com https://*.supabase.co https://supabase.co; frame-src 'self' https://js.stripe.com https://hooks.stripe.com; font-src 'self' data:;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https://api.stripe.com https://*.supabase.co https://supabase.co https://api.mapbox.com https://events.mapbox.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com; font-src 'self' data:; worker-src 'self' blob:; child-src 'self' blob:;",
           },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },

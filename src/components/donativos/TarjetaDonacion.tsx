@@ -6,6 +6,8 @@ import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Feather, Heart, Star } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 import FormularioDonacion from './FormularioDonacion'
+import MapaCondicional from './MapaCondicional'
+import Link from 'next/link'
 
 type TarjetaDonacion = Database['public']['Tables']['tarjetas_donacion']['Row']
 
@@ -140,10 +142,15 @@ export default function TarjetaDonacionCard({ tarjeta, donantesRecientes }: Tarj
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Type badge — top left */}
-          <div className="absolute top-3 left-3 z-10">
-            <span className="bg-conservation-gold text-forest-green-dark text-xs font-bold px-2.5 py-1 rounded-full">
+          <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+            <span className="bg-conservation-gold text-forest-green-dark text-xs font-bold px-2.5 py-1 rounded-full self-start shadow-md">
               {tipoBadgeLabel}
             </span>
+            {tarjeta.seccion === 'impulsa_vuelo' && (
+              <span className="bg-quetzal-blue text-white text-xs font-bold px-2.5 py-1 rounded-full self-start shadow-md">
+                En camino a la libertad 🗺️
+              </span>
+            )}
           </div>
 
           {/* Badges — top right */}
@@ -170,11 +177,24 @@ export default function TarjetaDonacionCard({ tarjeta, donantesRecientes }: Tarj
 
           {/* Species name + animal name */}
           <div>
-            <h2 className="text-2xl font-bold text-forest-green-dark leading-tight">
-              {tarjeta.nombre_especie}
-            </h2>
+            {tarjeta.seccion === 'impulsa_vuelo' ? (
+              <Link href={`/impulsa-el-vuelo/${tarjeta.id}`}>
+                <h2 className="text-2xl font-bold text-forest-green-dark leading-tight hover:text-quetzal-blue transition-colors">
+                  {tarjeta.nombre_especie}
+                </h2>
+              </Link>
+            ) : (
+              <h2 className="text-2xl font-bold text-forest-green-dark leading-tight">
+                {tarjeta.nombre_especie}
+              </h2>
+            )}
             {tarjeta.nombre_animal && (
               <p className="text-lg italic text-quetzal-blue mt-0.5">&ldquo;{tarjeta.nombre_animal}&rdquo;</p>
+            )}
+            {tarjeta.seccion === 'impulsa_vuelo' && tarjeta.area_protegida && (
+              <p className="text-xs text-forest-green-dark/70 font-medium mt-1 flex items-center gap-1">
+                📍 Destino: {tarjeta.area_protegida}
+              </p>
             )}
           </div>
 
@@ -269,6 +289,10 @@ export default function TarjetaDonacionCard({ tarjeta, donantesRecientes }: Tarj
               </div>
             )}
           </div>
+
+          {tarjeta.seccion === 'impulsa_vuelo' && (
+            <MapaCondicional tarjeta={tarjeta} />
+          )}
 
           {/* CTA Button */}
           {tarjeta.meta_cumplida ? (

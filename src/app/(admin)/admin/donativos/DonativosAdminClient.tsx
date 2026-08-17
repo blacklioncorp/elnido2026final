@@ -15,6 +15,7 @@ import {
   type TarjetaInput,
 } from './actions'
 import { createStripeProductForCard } from '@/app/actions/donaciones'
+import AdministrarActualizacionesModal from './AdministrarActualizacionesModal'
 
 type TarjetaDonacionRow = Database['public']['Tables']['tarjetas_donacion']['Row']
 
@@ -55,6 +56,15 @@ function TarjetaForm({
     meta_tipo: (initial?.meta_tipo as TarjetaInput['meta_tipo']) ?? 'unica',
     meta_monto: initial?.meta_monto ?? 0,
     activa: initial?.activa ?? false,
+    seccion: (initial?.seccion as TarjetaInput['seccion']) ?? 'amigos',
+    latitud_origen: initial?.latitud_origen ?? null,
+    longitud_origen: initial?.longitud_origen ?? null,
+    latitud_destino: initial?.latitud_destino ?? null,
+    longitud_destino: initial?.longitud_destino ?? null,
+    latitud_actual: initial?.latitud_actual ?? null,
+    longitud_actual: initial?.longitud_actual ?? null,
+    area_protegida: initial?.area_protegida ?? null,
+    liberada: initial?.liberada ?? false,
   })
   const [uploadingImg, setUploadingImg] = useState(false)
   const [uploadDetails, setUploadDetails] = useState<string | null>(null)
@@ -144,6 +154,78 @@ function TarjetaForm({
           onChange={(e) => setForm({ ...form, historia: e.target.value || null })} />
       </div>
 
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className={labelCls}>Sección</label>
+          <select className={inputCls} value={form.seccion}
+            onChange={(e) => setForm({ ...form, seccion: e.target.value as TarjetaInput['seccion'] })}>
+            <option value="amigos">Amigos de El Nido</option>
+            <option value="impulsa_vuelo">Impulsa el Vuelo</option>
+          </select>
+        </div>
+      </div>
+
+      {form.seccion === 'impulsa_vuelo' && (
+        <div className="p-4 bg-quetzal-blue/5 border border-quetzal-blue/20 rounded-xl space-y-4">
+          <h3 className="font-bold text-forest-green-dark">🗺️ Datos de Liberación (Impulsa el Vuelo)</h3>
+          
+          <div>
+            <label className={labelCls}>Área Protegida de Destino</label>
+            <input className={inputCls} value={form.area_protegida ?? ''}
+              placeholder="Ej: Reserva de la Biosfera Los Tuxtlas"
+              onChange={(e) => setForm({ ...form, area_protegida: e.target.value || null })} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Latitud Origen (El Nido)</label>
+              <input type="number" step="any" className={inputCls} value={form.latitud_origen ?? ''}
+                onChange={(e) => setForm({ ...form, latitud_origen: e.target.value ? Number(e.target.value) : null })} />
+            </div>
+            <div>
+              <label className={labelCls}>Longitud Origen</label>
+              <input type="number" step="any" className={inputCls} value={form.longitud_origen ?? ''}
+                onChange={(e) => setForm({ ...form, longitud_origen: e.target.value ? Number(e.target.value) : null })} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Latitud Destino</label>
+              <input type="number" step="any" className={inputCls} value={form.latitud_destino ?? ''}
+                onChange={(e) => setForm({ ...form, latitud_destino: e.target.value ? Number(e.target.value) : null })} />
+            </div>
+            <div>
+              <label className={labelCls}>Longitud Destino</label>
+              <input type="number" step="any" className={inputCls} value={form.longitud_destino ?? ''}
+                onChange={(e) => setForm({ ...form, longitud_destino: e.target.value ? Number(e.target.value) : null })} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Latitud Actual (GPS)</label>
+              <input type="number" step="any" className={inputCls} value={form.latitud_actual ?? ''}
+                onChange={(e) => setForm({ ...form, latitud_actual: e.target.value ? Number(e.target.value) : null })} />
+            </div>
+            <div>
+              <label className={labelCls}>Longitud Actual (GPS)</label>
+              <input type="number" step="any" className={inputCls} value={form.longitud_actual ?? ''}
+                onChange={(e) => setForm({ ...form, longitud_actual: e.target.value ? Number(e.target.value) : null })} />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={form.liberada}
+                onChange={(e) => setForm({ ...form, liberada: e.target.checked })}
+                className="h-4 w-4 accent-quetzal-blue" />
+              <span className="text-sm font-medium text-forest-green-dark">¿Especie liberada con éxito?</span>
+            </label>
+          </div>
+        </div>
+      )}
+
       <div>
         <label className={labelCls}>Imagen de la especie</label>
         <div className="flex items-center gap-3">
@@ -210,6 +292,7 @@ export default function DonativosAdminClient({
   const [filtro, setFiltro] = useState<Filtro>('todas')
   const [showForm, setShowForm] = useState(false)
   const [editando, setEditando] = useState<TarjetaDonacionRow | null>(null)
+  const [administrandoActualizaciones, setAdministrandoActualizaciones] = useState<{ id: string, nombre: string } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
@@ -450,6 +533,12 @@ export default function DonativosAdminClient({
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-center gap-2">
+                        {t.seccion === 'impulsa_vuelo' && (
+                          <button onClick={() => setAdministrandoActualizaciones({ id: t.id, nombre: t.nombre_animal || t.nombre_especie })}
+                            className="p-1.5 text-forest-green-dark/40 hover:text-quetzal-blue transition-colors" title="Bitácora de Vuelo">
+                            📖
+                          </button>
+                        )}
                         <a href={`/donativos`} target="_blank" rel="noopener noreferrer"
                           className="p-1.5 text-forest-green-dark/40 hover:text-quetzal-blue transition-colors" title="Ver en /donativos">
                           <Eye className="h-4 w-4" />
@@ -560,6 +649,15 @@ export default function DonativosAdminClient({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal Bitácora */}
+      {administrandoActualizaciones && (
+        <AdministrarActualizacionesModal
+          tarjetaId={administrandoActualizaciones.id}
+          tarjetaNombre={administrandoActualizaciones.nombre}
+          onClose={() => setAdministrandoActualizaciones(null)}
+        />
       )}
     </div>
   )

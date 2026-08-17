@@ -56,8 +56,8 @@ export default function LoginPage() {
       {/* Left panel - image */}
       <div className="hidden lg:flex lg:w-1/2 relative">
         <Image
-          src="/images/jaguar.png"
-          alt="Jaguar en El Nido"
+          src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Quetzal-Chucho.svg"
+          alt="Quetzal en El Nido"
           fill
           className="object-cover"
         />
