@@ -86,10 +86,18 @@ export default function HeroCinematico({ initialImages = [] }: Props) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-8 max-w-3xl text-2xl font-bold leading-tight text-off-white drop-shadow-lg md:text-6xl"
+          className="mb-6 max-w-4xl text-3xl font-bold leading-tight text-off-white drop-shadow-lg md:text-6xl"
         >
-          El último refugio de las aves más amenazadas de México
+          Protegemos la vida para que el futuro siga teniendo alas.
         </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="mb-10 max-w-2xl text-lg text-off-white/90 drop-shadow md:text-xl"
+        >
+          Más de 50 años dedicados a la conservación, protección y cuidado de especies que necesitan una nueva oportunidad.
+        </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -97,10 +105,10 @@ export default function HeroCinematico({ initialImages = [] }: Props) {
           className="pointer-events-auto"
         >
           <Link
-            href="/apadrinar"
+            href="/sobre-nosotros"
             className="hero-cta inline-block rounded-full bg-conservation-gold px-8 py-4 text-lg font-semibold text-forest-green-dark shadow-lg transition-colors hover:bg-conservation-gold/90"
           >
-            Conviértete en Guardián
+            Conoce El Nido
           </Link>
         </motion.div>
       </div>
