@@ -1,12 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Bird, BookOpen, Users, Heart,
   BookMarked, Settings, LogOut, ChevronRight, GraduationCap,
-  Store, Package, Wallet, BarChart3, Leaf, CalendarClock
+  Store, Package, Wallet, BarChart3, Leaf, CalendarClock,
+  Menu, X
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { adminCanAccess, getAdminRoleBadgeColor, ADMIN_ROLES, type AdminRole } from '@/lib/roles'
@@ -43,6 +45,7 @@ interface Props {
 }
 
 export default function SidebarClient({ userName, userEmail, adminRole }: Props) {
+  const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -74,22 +77,53 @@ export default function SidebarClient({ userName, userEmail, adminRole }: Props)
   const roleLabel = adminRole ? (ADMIN_ROLES[adminRole as AdminRole] ?? adminRole) : 'Sin rol'
 
   return (
-    <aside className="w-64 min-h-screen bg-forest-green-light/80 backdrop-blur-xl border-r border-white/10 flex flex-col">
-      {/* Logo */}
-      <div className="px-6 py-6 border-b border-white/10">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-off-white">
+    <>
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-14 bg-forest-green-dark border-b border-white/10 z-40 flex items-center justify-between px-4">
+        <Link href="/admin" className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md overflow-hidden flex items-center justify-center bg-off-white">
             <Image
               src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/LOGO-ELNIDO-blanco.webp"
-              alt="Icono" width={32} height={32} className="object-cover"
+              alt="Icono" width={24} height={24} className="object-cover"
             />
           </div>
-          <div>
-            <p className="text-off-white font-bold leading-none">El Nido</p>
-            <p className="text-off-white/40 text-xs">Panel Admin</p>
-          </div>
+          <span className="text-off-white font-bold leading-none text-sm">El Nido Admin</span>
         </Link>
+        <button onClick={() => setIsOpen(true)} className="text-off-white/80 hover:text-white p-1">
+          <Menu className="h-6 w-6" />
+        </button>
       </div>
+
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-[45]"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 min-h-screen bg-forest-green-light/80 backdrop-blur-xl border-r border-white/10 flex flex-col transition-transform duration-300 md:relative md:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        {/* Logo */}
+        <div className="px-6 py-6 border-b border-white/10 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-off-white">
+              <Image
+                src="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/icon-logos/LOGO-ELNIDO-blanco.webp"
+                alt="Icono" width={32} height={32} className="object-cover"
+              />
+            </div>
+            <div>
+              <p className="text-off-white font-bold leading-none">El Nido</p>
+              <p className="text-off-white/40 text-xs">Panel Admin</p>
+            </div>
+          </Link>
+          <button onClick={() => setIsOpen(false)} className="md:hidden text-off-white/50 hover:text-white">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-6 overflow-y-auto space-y-6">
@@ -103,6 +137,7 @@ export default function SidebarClient({ userName, userEmail, adminRole }: Props)
               return (
                 <Link
                   key={href} href={href}
+                  onClick={() => setIsOpen(false)}
                   className={cn(
                     'flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group',
                     active
@@ -145,6 +180,7 @@ export default function SidebarClient({ userName, userEmail, adminRole }: Props)
           Cerrar Sesión
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   )
 }
