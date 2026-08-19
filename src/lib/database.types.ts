@@ -11,6 +11,33 @@ export type BitacoraEstado = 'borrador' | 'revision' | 'publicado' | 'rechazado'
 export type Database = {
   public: {
     Tables: {
+      tokens_cancelacion: {
+        Row: {
+          id: string
+          token: string
+          email: string
+          expira_en: string
+          usado: boolean
+          creado_en: string
+        }
+        Insert: {
+          id?: string
+          token: string
+          email: string
+          expira_en: string
+          usado?: boolean
+          creado_en?: string
+        }
+        Update: {
+          id?: string
+          token?: string
+          email?: string
+          expira_en?: string
+          usado?: boolean
+          creado_en?: string
+        }
+        Relationships: []
+      }
       admin_roles: {
         Row: {
           id: AdminRole
