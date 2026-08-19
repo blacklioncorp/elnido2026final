@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { PlaceholderImage } from '@/components/ui/PlaceholderImage'
 
 interface LightboxImageProps {
   src: string
@@ -34,6 +35,7 @@ export default function LightboxImage({
   onNavigate
 }: LightboxImageProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [imageError, setImageError] = useState(false)
   
   // URLs deducidas
   const cardUrl = getOptimizedUrl(src, 'card')
@@ -66,6 +68,10 @@ export default function LightboxImage({
   const canGoLeft = !!onNavigate && currentGalleryIndex > 0
   const canGoRight = !!onNavigate && !!gallery && currentGalleryIndex < gallery.length - 1
 
+  if (imageError) {
+    return <PlaceholderImage className={className} />
+  }
+
   return (
     <>
       <Image
@@ -81,6 +87,7 @@ export default function LightboxImage({
           e.stopPropagation()
           setIsOpen(true)
         }}
+        onError={() => setImageError(true)}
       />
 
       {isOpen && (

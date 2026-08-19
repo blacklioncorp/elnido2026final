@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink, Calendar, User, DollarSign, Target, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
@@ -13,6 +13,8 @@ interface DonacionDetalleProps {
 }
 
 export default function DonacionDetalleModal({ isOpen, onClose, data }: DonacionDetalleProps) {
+  const [imageError, setImageError] = useState(false)
+
   // Handle escape key
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -73,12 +75,13 @@ export default function DonacionDetalleModal({ isOpen, onClose, data }: Donacion
               {/* Header: Especie Info */}
               <div className="flex flex-col items-center text-center mb-6 pt-4">
                 <div className="relative w-20 h-20 rounded-full overflow-hidden mb-4 border-4 border-forest-green-dark/5">
-                  {data.imagen_url ? (
+                  {data.imagen_url && !imageError ? (
                     <Image
                       src={data.imagen_url}
                       alt={data.nombre_especie || 'Especie'}
                       fill
                       className="object-cover"
+                      onError={() => setImageError(true)}
                     />
                   ) : (
                     <div className="w-full h-full bg-forest-green-dark/10 flex items-center justify-center text-2xl">

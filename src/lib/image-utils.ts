@@ -8,7 +8,13 @@ export async function processAndUploadImage(
 ): Promise<{ url: string } | { error: string }> {
   try {
     if (file.size > 10 * 1024 * 1024) {
-      return { error: 'La imagen no debe superar 10 MB' }
+      throw new Error('El archivo excede el límite de 10 MB')
+    }
+
+    const extensionesPermitidas = ['jpg', 'jpeg', 'png', 'webp', 'gif']
+    const extension = file.name.split('.').pop()?.toLowerCase()
+    if (!extensionesPermitidas.includes(extension || '')) {
+      throw new Error('Formato no soportado. Usa JPG, PNG, WebP o GIF')
     }
 
     const arrayBuffer = await file.arrayBuffer()
@@ -34,7 +40,7 @@ export async function processAndUploadImage(
         })
       if (error) {
         console.error(`Error al subir ${v.suffix}:`, error.message)
-        throw new Error(`Error al subir imagen a Supabase`)
+        throw new Error(`Error al subir la imagen a Supabase. Intenta de nuevo.`)
       }
     }
 

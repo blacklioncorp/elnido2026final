@@ -65,7 +65,14 @@ function TarjetaForm({
 
     const sizeMB = file.size / (1024 * 1024)
     if (sizeMB > 10) {
-      toast.error('La imagen no debe superar 10 MB. Comprímela en squoosh.app')
+      toast.error(`❌ ${file.name} pesa ${sizeMB.toFixed(2)} MB. Máximo: 10 MB.`)
+      e.target.value = ''
+      return
+    }
+
+    const formatosPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!formatosPermitidos.includes(file.type)) {
+      toast.error(`❌ Formato no soportado: ${file.type}. Usa JPG, PNG, WebP o GIF.`)
       e.target.value = ''
       return
     }
@@ -180,11 +187,11 @@ function TarjetaForm({
       <div className="flex gap-3 pt-2">
         <button
           onClick={() => onSubmit(form)}
-          disabled={loading}
+          disabled={loading || uploadingImg}
           className="flex-1 bg-forest-green-dark text-white font-bold py-2.5 rounded-xl hover:bg-forest-green-light transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
         >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          {initial ? 'Guardar cambios' : 'Crear tarjeta'}
+          {loading || uploadingImg ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          {uploadingImg ? 'Subiendo...' : (initial ? 'Guardar cambios' : 'Crear tarjeta')}
         </button>
         <button onClick={onCancel}
           className="px-5 py-2.5 rounded-xl text-forest-green-dark/60 hover:text-forest-green-dark hover:bg-forest-green-dark/5 transition-colors font-medium text-sm">

@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { PlaceholderImage } from '@/components/ui/PlaceholderImage'
 import type { Species } from '@/lib/species'
 import { IUCN_LABELS, IUCN_COLORS } from '@/lib/iucn'
 import { formatCurrency } from '@/lib/utils'
@@ -14,6 +16,7 @@ interface SpecieCardProps {
 }
 
 const SpecieCard = ({ specie, index = 0 }: SpecieCardProps) => {
+  const [imageError, setImageError] = useState(false)
   const iucnColor = IUCN_COLORS[specie.iucnStatus]
   const iucnLabel = IUCN_LABELS[specie.iucnStatus]
 
@@ -25,12 +28,17 @@ const SpecieCard = ({ specie, index = 0 }: SpecieCardProps) => {
       className="group bg-forest-green-light/40 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 hover:border-conservation-gold/30 transition-all duration-500 hover:shadow-2xl hover:shadow-conservation-gold/5 flex flex-col"
     >
       <div className="relative h-52 overflow-hidden">
-        <Image
-          src={specie.imageUrl}
-          alt={specie.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700"
-        />
+        {imageError ? (
+          <PlaceholderImage />
+        ) : (
+          <Image
+            src={specie.imageUrl}
+            alt={specie.name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-700"
+            onError={() => setImageError(true)}
+          />
+        )}
         {/* IUCN badge */}
         <div
           className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-white text-xs font-bold shadow-lg"

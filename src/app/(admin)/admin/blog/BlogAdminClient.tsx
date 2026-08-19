@@ -62,8 +62,14 @@ export default function BlogAdminClient({ inicial }: Props) {
     const file = ev.target.files?.[0]
     if (!file) return
     if (file.size > 10 * 1024 * 1024) { 
-      toast.error('La imagen no debe superar 10 MB. Comprímela en squoosh.app')
+      toast.error(`❌ ${file.name} pesa ${(file.size / 1024 / 1024).toFixed(2)} MB. Máximo: 10 MB.`)
       return 
+    }
+
+    const formatosPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!formatosPermitidos.includes(file.type)) {
+      toast.error(`❌ Formato no soportado: ${file.type}. Usa JPG, PNG, WebP o GIF.`)
+      return
     }
     
     setFileName(`${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`)
@@ -234,13 +240,13 @@ export default function BlogAdminClient({ inicial }: Props) {
                 </div>
                 <button type="button" onClick={() => setForm(f => ({ ...f, publicado: !f.publicado }))}
                   className={`relative w-11 h-6 rounded-full transition-colors ${form.publicado ? 'bg-conservation-gold' : 'bg-white/20'}`}>
-                  <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.publicado ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.publicado ? 'translate-x-5' : 'translate-x-0'}`} />
                 </button>
               </div>
 
               <button type="submit" disabled={isPending || uploadingImg}
                 className="w-full bg-conservation-gold hover:bg-conservation-gold/90 disabled:opacity-50 text-forest-green-dark font-bold py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2">
-                {isPending ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</> : (editando ? 'Actualizar Post' : 'Crear Post')}
+                {uploadingImg ? <><Loader2 className="h-4 w-4 animate-spin" /> Subiendo y optimizando…</> : isPending ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</> : (editando ? 'Actualizar Post' : 'Crear Post')}
               </button>
             </form>
           </div>
