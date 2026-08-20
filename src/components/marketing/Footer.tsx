@@ -15,6 +15,7 @@ export default function Footer() {
             <h4 className="font-semibold text-sm text-off-white uppercase tracking-widest mb-4">Explorar</h4>
             <ul className="space-y-2.5">
               {[
+                { href: '/mision-y-vision', label: 'Misión y Visión' },
                 { href: '/fauna', label: 'Fauna' },
                 { href: '/apadrinar', label: 'Apadrinar' },
                 // TODO: Reactivar cuando tenga contenido - Blog
@@ -55,6 +56,8 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-off-white/30 text-sm">&copy; {new Date().getFullYear()} El Nido. Todos los derechos reservados.</p>
           <div className="flex gap-5 text-off-white/30 text-sm">
+            <Link href="/politica-de-privacidad" className="hover:text-off-white/60 transition-colors">Política de Privacidad</Link>
+            <Link href="/terminos-y-condiciones" className="hover:text-off-white/60 transition-colors">Términos y Condiciones</Link>
             <Link href="/contacto" className="hover:text-off-white/60 transition-colors">Contacto</Link>
           </div>
         </div>
