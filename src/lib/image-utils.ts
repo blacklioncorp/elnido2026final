@@ -1,4 +1,3 @@
-import sharp from 'sharp'
 import { createAdminSupabaseClient } from '@/lib/supabase-server'
 
 export async function processAndUploadImage(
@@ -20,6 +19,9 @@ export async function processAndUploadImage(
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     const supabase = await createAdminSupabaseClient()
+
+    const sharpModule = await import('sharp')
+    const sharp = sharpModule.default || sharpModule
 
     const baseFileName = `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`
 
