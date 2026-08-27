@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { Loader2, Edit, Save, X, Search, Filter } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
+import Image from 'next/image'
+import { uploadPaqueteImagen } from '@/app/actions/grupos'
 interface Props {
   initialPaquetes: PaqueteEducativo[]
   initialCotizaciones: Cotizacion[]
@@ -110,12 +111,43 @@ export default function GruposAdminClient({ initialPaquetes, initialCotizaciones
     </div>
   )
 
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('La imagen no debe superar los 10MB')
+      return
+    }
+
+    try {
+      setIsSaving(true)
+      
+      const formData = new FormData()
+      formData.append('file', file)
+      
+      const response = await uploadPaqueteImagen(formData)
+      if ('error' in response) {
+        throw new Error(response.error)
+      }
+      
+      setEditFormData(prev => ({ ...prev, imagen_url: response.url }))
+      toast.success('Imagen subida correctamente. Recuerda guardar los cambios.')
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.message || 'Error al subir la imagen')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   const renderPaquetes = () => (
     <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
       <table className="w-full text-left text-sm text-off-white">
         <thead className="bg-white/5 border-b border-white/10 text-off-white/60">
           <tr>
             <th className="px-6 py-4 font-medium">Nombre</th>
+            <th className="px-6 py-4 font-medium">Imagen</th>
             <th className="px-6 py-4 font-medium">Nivel</th>
             <th className="px-6 py-4 font-medium">Duración</th>
             <th className="px-6 py-4 font-medium">Precio (MXN)</th>
@@ -129,6 +161,32 @@ export default function GruposAdminClient({ initialPaquetes, initialCotizaciones
             return (
               <tr key={p.id} className="hover:bg-white/5 transition-colors">
                 <td className="px-6 py-4 font-medium">{p.nombre}</td>
+                <td className="px-6 py-4">
+                  {isEditing ? (
+                    <div className="flex flex-col gap-2">
+                      {editFormData.imagen_url && (
+                        <div className="relative w-16 h-16 rounded overflow-hidden">
+                          <Image src={editFormData.imagen_url} alt="Preview" fill className="object-cover" />
+                        </div>
+                      )}
+                      <input 
+                        type="file" 
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handleImageUpload}
+                        disabled={isSaving}
+                        className="text-xs w-32"
+                      />
+                    </div>
+                  ) : (
+                    p.imagen_url ? (
+                      <div className="relative w-12 h-12 rounded overflow-hidden">
+                        <Image src={p.imagen_url} alt={p.nombre} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <span className="text-xs text-off-white/40">Sin imagen</span>
+                    )
+                  )}
+                </td>
                 <td className="px-6 py-4 capitalize">{p.nivel}</td>
                 <td className="px-6 py-4">{p.duracion_horas}h</td>
                 <td className="px-6 py-4">

@@ -15,6 +15,7 @@ export default function Footer() {
             <h4 className="font-semibold text-sm text-off-white uppercase tracking-widest mb-4">Explorar</h4>
             <ul className="space-y-2.5">
               {[
+                { href: '/quienes-somos', label: 'Quiénes Somos' },
                 { href: '/mision-y-vision', label: 'Misión y Visión' },
                 { href: '/fauna', label: 'Fauna' },
                 { href: '/apadrinar', label: 'Apadrinar' },
@@ -60,6 +61,11 @@ export default function Footer() {
             <Link href="/terminos-y-condiciones" className="hover:text-off-white/60 transition-colors">Términos y Condiciones</Link>
             <Link href="/contacto" className="hover:text-off-white/60 transition-colors">Contacto</Link>
           </div>
+        </div>
+        
+        <div className="mt-8 text-center text-sm text-muted-foreground opacity-50">
+          <p className="italic">"Servir a la vida, protegerla."</p>
+          <p className="mt-1">— Dr. Jesús Estudillo López</p>
         </div>
       </div>
     </footer>

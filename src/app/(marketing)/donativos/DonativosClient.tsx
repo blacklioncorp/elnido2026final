@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Heart, ExternalLink } from 'lucide-react'
+import { Heart, ExternalLink, Microscope } from 'lucide-react'
 import type { Database } from '@/lib/database.types'
 import TarjetaDonacion from '@/components/donativos/TarjetaDonacion'
 import VideoTestimonial from '@/components/home/VideoTestimonial'
@@ -77,7 +77,7 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl, heade
             Programa Guardián
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-off-white mb-5 leading-tight tracking-tight">
-            Apadrina una{' '}
+            Se parte de su {' '}
             <span
               className="relative"
               style={{
@@ -86,7 +86,7 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl, heade
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Especie
+              Historia
             </span>
           </h1>
           <p className="text-off-white/70 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
@@ -111,6 +111,21 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl, heade
 
       {/* ── CARDS SECTION ── */}
       <section id="tarjetas" className="max-w-7xl mx-auto px-4 py-16">
+        {/* Sección de Confianza */}
+        <div className="bg-quetzal-blue/10 rounded-2xl p-6 md:p-8 mb-12 flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-4xl mx-auto text-center md:text-left border border-quetzal-blue/20 shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-quetzal-blue/20 text-quetzal-blue flex items-center justify-center shrink-0 mx-auto md:mx-0">
+            <Microscope size={32} />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-forest-green-dark mb-2">Respaldado por ciencia y amor</h3>
+            <p className="text-forest-green-dark/70 text-lg mb-4 italic">
+              "El Dr. Jesús Estudillo dedicó 40 años a la conservación. Tu donativo continúa su legado"
+            </p>
+            <Link href="/quienes-somos" className="text-quetzal-blue font-semibold hover:underline inline-block">
+              Conoce más sobre el fundador &rarr;
+            </Link>
+          </div>
+        </div>
         {tarjetas.length === 0 ? (
           /* Empty State */
           <motion.div

@@ -39,41 +39,30 @@ export default function PoliticaDePrivacidadPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto bg-forest-green-light/20 backdrop-blur-md border border-white/5 rounded-3xl p-8 md:p-12 shadow-2xl text-off-white/80 space-y-8">
             
-            <div>
-              <h2 className="text-2xl font-bold text-conservation-gold mb-4">1. Introducción</h2>
+            <div className="space-y-6">
               <p className="leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi tristique congue odio ac venenatis. Suspendisse eleifend elit in nulla venenatis, at varius magna tristique.
+                VIDA SILVESTRE JESÚS ESTUDILLO LÓPEZ A.C. (“EL NIDO”), con domicilio en Avenida Acozac esquina Progreso s/n Col. Santa Bárbara Municipio de Ixtapaluca, C.P. 56530, Estado de México, es responsable de recabar sus datos personales, del uso que se le dé a los mismos y de su protección. De conformidad con lo dispuesto en la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, EL NIDO cuenta con todas las medidas de seguridad físicas, técnicas y administrativas adecuadas para proteger sus datos personales. Bajo ninguna circunstancia comercializaremos sus datos personales sin su consentimiento previo y por escrito.
               </p>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-conservation-gold mb-4">2. Recopilación de Datos</h2>
+              
               <p className="leading-relaxed">
-                Nullam euismod congue libero. Integer vitae mi non diam sodales tristique ut ut nulla. Maecenas sit amet aliquet sem, nec elementum enim:
+                Su información personal será utilizada de la forma señalada en la Ley Federal de Datos Personales en Posesión de los Particulares y su Reglamento. Específicamente, en el caso de clientes y socios de negocios, su información personal será utilizada proveer servicios de entretenimiento, restaurante y espectáculos en el Aviario El Nido; comercializar productos relacionados con las actividades del Aviario; establecer contacto telefónico y/o enviar información por medios electrónicos acerca de promociones, actividades, eventos e información en general sobre el parque o cualquier actividad análoga a las anteriores; en el caso de proveedores, su información personal será utilizada para obtener cotizaciones, enviar pedidos, efectuar pagos, responder sobre ofertas, así como para la contratación de servicios y productos relacionados con las actividades de EL NIDO, o cualquier actividad análoga a las anteriores y, en el caso de los empleados su información personal será utilizada con fines de selección y contratación de personal, o cualquier actividad análoga a las anteriores.
               </p>
-              <ul className="list-disc list-inside mt-4 space-y-2 text-off-white/70">
-                <li>Datos personales (nombre, correo electrónico).</li>
-                <li>Información de pago cifrada.</li>
-                <li>Datos de navegación (cookies).</li>
-              </ul>
-            </div>
 
-            <div>
-              <h2 className="text-2xl font-bold text-conservation-gold mb-4">3. Uso de la Información</h2>
               <p className="leading-relaxed">
-                Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.
+                Asimismo, al proporcionar sus datos, Usted autoriza a EL NIDO, su utilización con fines mercadotécnicos, estadísticos, promocionales, publicitarios, informativos o de prospección comercial respecto a las actividades de EL NIDO, sus filiales, subsidiarias y/o socios de negocios u otras actividades relacionadas con la promoción de productos y servicios que dichas entidades comercializan. Para las finalidades antes mencionadas, requerimos obtener datos personales tales como nombre, edad, dirección de correo electrónico, número telefónico, domicilio, antecedentes laborales, referencias personales y laborales.
               </p>
-            </div>
 
-            <div>
-              <h2 className="text-2xl font-bold text-conservation-gold mb-4">4. Protección de Datos</h2>
               <p className="leading-relaxed">
-                Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.
+                En caso que alguno de los datos proporcionados llegase a ser considerado como sensible bajo la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, dichos datos recibirán el tratamiento que les corresponda bajo dicha Ley.
               </p>
-            </div>
 
-            <div className="pt-8 border-t border-white/10 text-sm text-off-white/50 text-center">
-              Si tienes preguntas sobre nuestra Política de Privacidad, por favor contáctanos en <a href="mailto:privacidad@elnido.org.mx" className="text-conservation-gold hover:underline">privacidad@elnido.org.mx</a>
+              <p className="leading-relaxed">
+                Usted tiene derecho de acceder, rectificar y cancelar sus datos personales, así como de oponerse al tratamiento de los mismos o revocar el consentimiento que para tal fin nos haya otorgado, mediante comunicación escrita, señalando el nombre del titular y domicilio u otro medio para comunicarle la respuesta a su solicitud, documentación que acredite su identidad o en su caso la representación legal del titular de los datos, la descripción clara y precisa de los datos personales respecto de los que se busca ejercer alguno de los derechos antes mencionados, los elementos y/o documentos que faciliten la localización de los datos personales, y los requisitos previstos para el ejercicio de los derechos ARCO en la Ley Federal de Protección de Datos Personales en Posesión de los Particulares y su Reglamento. La comunicación deberá estar dirigida al Departamento de Datos Personales de EL NIDO y podrá entregarse en el domicilio de EL NIDO antes indicado o enviarse al siguiente correo electrónico: <a href="mailto:info@elnido.mx" className="text-conservation-gold hover:underline">info@elnido.mx</a>; Asimismo, le informamos que EL NIDO no transfiere sus datos a terceros en forma alguna. Lo anterior, sin perjuicio de las remisiones de datos que EL NIDO hace a sus encargados que le apoyan en cuestiones de manejo y almacenamiento de bases de datos, registro estadístico, recursos humanos, ventas, distribución, administración y contabilidad de la empresa, servicios de mercadotecnia digital, envío de información, avisos y promociones así como entrega de producto o prestación de algún servicio.
+              </p>
+
+              <p className="leading-relaxed">
+                Si usted desea dejar de recibir mensajes promocionales de nuestra parte puede solicitarlo a través del Departamento de Datos Personales al correo electrónico: <a href="mailto:info@elnido.mx" className="text-conservation-gold hover:underline">info@elnido.mx</a>. Cualquier modificación a este aviso de privacidad será debidamente informada por EL NIDO a través de su sitio web <a href="https://www.elnido.mx" className="text-conservation-gold hover:underline" target="_blank" rel="noopener noreferrer">www.elnido.mx</a>, por lo que podrá consultarla en el mismo.
+              </p>
             </div>
 
           </div>

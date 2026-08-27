@@ -6,11 +6,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 const HERO_IMAGES = [
-  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Quetzal-Chucho.svg",
-  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Guacamaya-Jacinta.svg",
-  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Flamingo.svg",
-  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/Jaguar-(Samba).svg",
-  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/tucan.webp"
+  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/Hero/1_Quetzal_Chucho.svg",
+  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/Hero/2_hero.svg",
+  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/Hero/3_Jaguar_Samba.svg",
+  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/Hero/4_hero_grupoos.svg",
+  "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/Hero/5_Guacamaya_Jacinta.svg"
 ]
 
 const Hero = () => {
@@ -87,7 +87,7 @@ const Hero = () => {
           </motion.div>
         </div>
       </motion.div>
-      
+
       {/* Decorative Wave at bottom */}
       <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none z-10 text-forest-green-dark">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-16 md:h-24 transform rotate-180">

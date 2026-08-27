@@ -66,7 +66,7 @@ export default function GrupoCard({ paquete, onSelect }: Props) {
 
       <div className="p-6">
         <h3 className="text-2xl font-bold text-off-white mb-2">{paquete.nombre}</h3>
-        <p className="text-off-white/60 text-sm mb-4 line-clamp-2">{paquete.descripcion}</p>
+        <p className="text-off-white/60 text-sm mb-4 line-clamp-2">{paquete.descripcion_corta}</p>
         
         <div className="flex items-center gap-4 mb-6">
           <div className="flex items-center gap-1.5 text-conservation-gold">
@@ -106,37 +106,33 @@ export default function GrupoCard({ paquete, onSelect }: Props) {
           >
             <div className="p-6 space-y-6">
               {/* Descripción */}
-              {paquete.descripcion && (
+              {paquete.descripcion_larga && (
                 <div>
                   <h4 className="text-off-white font-semibold mb-2">Sobre la experiencia</h4>
-                  <p className="text-off-white/70 text-sm leading-relaxed">{paquete.descripcion}</p>
+                  <p className="text-off-white/70 text-sm leading-relaxed">{paquete.descripcion_larga}</p>
                 </div>
               )}
 
-              {/* Qué Incluye */}
-              {paquete.que_incluye && paquete.que_incluye.length > 0 && (
+              {/* Objetivos */}
+              {paquete.objetivos && (
                 <div>
-                  <h4 className="text-off-white font-semibold mb-3">¿Qué incluye?</h4>
+                  <h4 className="text-off-white font-semibold mb-2">Objetivos</h4>
+                  <p className="text-off-white/70 text-sm leading-relaxed">{paquete.objetivos}</p>
+                </div>
+              )}
+
+              {/* Actividades */}
+              {paquete.actividades && Array.isArray(paquete.actividades) && paquete.actividades.length > 0 && (
+                <div>
+                  <h4 className="text-off-white font-semibold mb-3">Actividades Principales</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {paquete.que_incluye.map((item, i) => (
+                    {paquete.actividades.map((item, i) => (
                       <div key={i} className="flex gap-3 bg-white/5 p-3 rounded-lg">
                         <CheckCircle2 className="w-5 h-5 text-conservation-gold flex-shrink-0" />
-                        <p className="text-off-white text-sm font-medium">{item}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Qué NO Incluye */}
-              {paquete.que_no_incluye && paquete.que_no_incluye.length > 0 && (
-                <div>
-                  <h4 className="text-off-white font-semibold mb-3">No Incluye</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {paquete.que_no_incluye.map((item, i) => (
-                      <div key={i} className="flex gap-3 bg-white/5 p-3 rounded-lg">
-                        <X className="w-5 h-5 text-red-400 flex-shrink-0" />
-                        <p className="text-off-white text-sm font-medium">{item}</p>
+                        <div className="flex flex-col">
+                          <p className="text-off-white text-sm font-medium">{item.nombre || item}</p>
+                          {item.duracion && <span className="text-xs text-off-white/50">{item.duracion}</span>}
+                        </div>
                       </div>
                     ))}
                   </div>

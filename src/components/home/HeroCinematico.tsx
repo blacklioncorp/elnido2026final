@@ -96,7 +96,7 @@ export default function HeroCinematico({ initialImages = [] }: Props) {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="mb-10 max-w-2xl text-lg text-off-white/90 drop-shadow md:text-xl"
         >
-          Más de 50 años dedicados a la conservación, protección y cuidado de especies que necesitan una nueva oportunidad.
+          Damos una segunda oportunidad a los animales e inspirar el amor y cuidado por la vida.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

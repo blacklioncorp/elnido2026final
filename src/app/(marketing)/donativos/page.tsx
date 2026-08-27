@@ -69,5 +69,5 @@ export default async function DonativosPage() {
 
   const headerImage = "https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/especies/plumas-Himalayo.svg";
 
-  return <DonativosClient tarjetas={tarjetas ?? []} donantesMap={donantesMap} videoUrl={videoUrl} headerImage={headerImage} />
+  return <DonativosClient tarjetas={tarjetas ?? []} donantesMap={donantesMap} videoUrl="https://gbvlbavpyzbcmnxpdaxg.supabase.co/storage/v1/object/public/video/se_parte_de_su_historia.mp4" headerImage={headerImage} />
 }

@@ -796,18 +796,14 @@ export type Database = {
           nivel: 'preescolar' | 'primaria' | 'secundaria' | 'preparatoria' | 'licenciatura'
           duracion_horas: number
           precio_por_persona: number
-          min_personas: number
           max_personas: number
-          descripcion: string
-          que_incluye: string[] | null
-          que_no_incluye: string[] | null
+          descripcion_corta: string
+          descripcion_larga: string
+          objetivos: string
+          actividades: any[]
           itinerario: any[] | null
-          instalaciones: string[] | null
-          alineacion_sep: string[] | null
-          incluye_transporte: boolean
-          precio_transporte: number | null
-          incluye_lunch: boolean
-          precio_lunch: number | null
+          instalaciones: string | null
+          alineacion_sep: string | null
           imagen_url: string | null
           activo: boolean
           created_at: string

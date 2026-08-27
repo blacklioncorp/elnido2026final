@@ -10,11 +10,12 @@ import { createClient } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
+  { href: '/quienes-somos', label: 'Quiénes Somos' },
   { href: '/fauna', label: 'Fauna' },
   // TODO: Reactivar cuando tenga contenido - Diario de Campo
   // { href: '/diario-de-campo', label: 'Diario de Campo' },
   { href: '/grupos', label: 'Grupos 🎓' },
-  { href: '/donativos', label: 'Apadrinar 🦜' },
+  { href: '/donativos', label: 'Se parte de su Historia' },
   // TODO: Reactivar cuando tenga contenido - Blog
   // { href: '/blog', label: 'Blog' },
   { href: '/donar', label: 'Donar' },
