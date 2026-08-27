@@ -47,7 +47,7 @@ export default function GrupoCard({ paquete, onSelect }: Props) {
             src={paquete.imagen_url} 
             alt={paquete.nombre} 
             fill
-            className="object-cover opacity-80 mix-blend-overlay"
+            className="object-cover"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center opacity-30">
