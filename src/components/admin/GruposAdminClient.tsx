@@ -36,7 +36,7 @@ export default function GruposAdminClient({ initialPaquetes, initialCotizaciones
   const confirmadas = cotizaciones.filter(c => c.estado === 'confirmada').length
   const personasTotal = cotizaciones
     .filter(c => c.estado === 'confirmada')
-    .reduce((acc, curr) => acc + curr.personas, 0)
+    .reduce((acc, curr) => acc + curr.numero_personas, 0)
 
   // --- Handlers ---
   const handleEditClick = (paquete: PaqueteEducativo) => {
@@ -282,11 +282,11 @@ export default function GruposAdminClient({ initialPaquetes, initialCotizaciones
                     {new Date(c.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
-                    <p className="font-medium">{c.escuela}</p>
-                    <p className="text-xs text-off-white/50">{c.cliente_nombre}</p>
+                    <p className="font-medium">{c.nombre_institucion}</p>
+                    <p className="text-xs text-off-white/50">{c.nombre_contacto}</p>
                   </td>
                   <td className="px-6 py-4">{c.paquetes_educativos?.nombre}</td>
-                  <td className="px-6 py-4">{c.personas}</td>
+                  <td className="px-6 py-4">{c.numero_personas}</td>
                   <td className="px-6 py-4">
                     <span className={cn("px-2 py-1 rounded-full text-xs font-semibold capitalize", 
                       c.estado === 'pendiente' && 'bg-yellow-500/20 text-yellow-400',

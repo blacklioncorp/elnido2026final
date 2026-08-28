@@ -141,7 +141,7 @@ export default function Hero3D() {
           className="pointer-events-auto"
         >
           <Link
-            href="/sobre-nosotros"
+            href="/quienes-somos"
             className="hero3d-cta inline-block rounded-full bg-conservation-gold px-8 py-4 text-lg font-semibold text-forest-green-dark shadow-lg transition-colors hover:bg-conservation-gold/90"
           >
             Conoce El Nido

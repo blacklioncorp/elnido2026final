@@ -36,15 +36,14 @@ export type EstadoCotizacion = 'pendiente' | 'respondida' | 'confirmada' | 'canc
 export interface Cotizacion {
   id: string;
   paquete_id: string;
-  cliente_nombre: string;
-  cliente_email: string;
-  cliente_telefono: string | null;
-  escuela: string | null;
-  personas: number;
+  nombre_contacto: string;
+  email_contacto: string;
+  telefono_contacto: string | null;
+  nombre_institucion: string | null;
+  numero_personas: number;
   fecha_deseada: string;
   incluye_lunch: boolean;
   incluye_transporte: boolean;
-  total_estimado: number;
   mensaje: string | null;
   estado: EstadoCotizacion;
   created_at: string;

@@ -15,7 +15,7 @@ interface Props {
   selectedPaqueteId?: string
 }
 
-const LUNCH_PRICE = 80 // Precio fijo por persona
+const LUNCH_PRICE = 150 // Precio fijo por persona
 const MIN_PERSONAS = 10
 const MAX_PERSONAS = 60
 
@@ -24,7 +24,6 @@ const formSchema = z.object({
   personas: z.number().min(MIN_PERSONAS, `Mínimo ${MIN_PERSONAS} personas`).max(MAX_PERSONAS, `Máximo ${MAX_PERSONAS} personas`),
   fecha_deseada: z.string().min(1, 'Selecciona una fecha deseada'),
   incluye_lunch: z.boolean().optional(),
-  incluye_transporte: z.boolean().optional(),
   cliente_nombre: z.string().min(2, 'Nombre es requerido'),
   cliente_email: z.string().email('Email inválido'),
   cliente_telefono: z.string().optional(),
@@ -51,7 +50,6 @@ export default function CalculadoraCotizacion({ paquetes, selectedPaqueteId }: P
       personas: 30,
       fecha_deseada: '',
       incluye_lunch: false,
-      incluye_transporte: false,
       acepto_terminos: false
     }
   })
@@ -97,7 +95,7 @@ export default function CalculadoraCotizacion({ paquetes, selectedPaqueteId }: P
       toast.error('Selecciona un paquete y una fecha para cotizar por WhatsApp')
       return
     }
-    const numero = '5215512345678' // Reemplazar con el real
+    const numero = '525621600230'
     const mensaje = `Hola, quiero información sobre el paquete ${paqueteSeleccionado.nombre} para ${watchAll.personas} personas. Fecha deseada: ${watchAll.fecha_deseada}.`
     const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`
     window.open(url, '_blank', 'noopener noreferrer')
@@ -198,17 +196,6 @@ export default function CalculadoraCotizacion({ paquetes, selectedPaqueteId }: P
                     Incluir Lunch (${LUNCH_PRICE} MXN por persona)
                   </span>
                 </label>
-                
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <div className="relative flex items-center justify-center">
-                    <input type="checkbox" {...register('incluye_transporte')} className="peer sr-only" />
-                    <div className="w-5 h-5 border-2 border-white/20 rounded peer-checked:bg-conservation-gold peer-checked:border-conservation-gold transition-colors" />
-                    <CheckCircle2 className="absolute w-3.5 h-3.5 text-forest-green-dark opacity-0 peer-checked:opacity-100 transition-opacity" />
-                  </div>
-                  <span className="text-sm text-off-white/80 group-hover:text-off-white transition-colors">
-                    Deseo cotizar transporte escolar
-                  </span>
-                </label>
               </div>
 
               {/* Datos de Contacto */}
@@ -296,13 +283,6 @@ export default function CalculadoraCotizacion({ paquetes, selectedPaqueteId }: P
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-off-white/70">Lunch ({watchAll.personas || 0} pax)</span>
                     <span className="text-off-white font-semibold">${lunchTotal.toFixed(2)}</span>
-                  </div>
-                )}
-
-                {watchAll.incluye_transporte && (
-                  <div className="flex justify-between items-center text-sm text-quetzal-blue">
-                    <span>Transporte</span>
-                    <span>A consultar</span>
                   </div>
                 )}
               </div>

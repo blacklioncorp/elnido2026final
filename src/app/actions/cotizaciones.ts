@@ -16,7 +16,6 @@ const schema = z.object({
   personas: z.number().min(10).max(60),
   fecha_deseada: z.string().optional(),
   incluye_lunch: z.boolean().default(false),
-  incluye_transporte: z.boolean().default(false),
   total_estimado: z.number().optional().default(0),
   mensaje: z.string().optional(),
 })
@@ -40,7 +39,6 @@ export async function enviarCotizacion(prevState: unknown, formData: FormData) {
       personas: Number(formData.get('personas') || formData.get('numero_personas')),
       fecha_deseada: formData.get('fecha_deseada')?.toString() || undefined,
       incluye_lunch: formData.get('incluye_lunch') === 'on' || formData.get('incluye_lunch') === 'true',
-      incluye_transporte: formData.get('incluye_transporte') === 'on' || formData.get('incluye_transporte') === 'true',
       total_estimado: Number(formData.get('total_estimado') || 0),
       mensaje: sanitizeHtml(formData.get('mensaje')?.toString() || ''),
     }
@@ -72,14 +70,23 @@ export async function enviarCotizacion(prevState: unknown, formData: FormData) {
     const { data: cotizacion, error } = await supabase
       .from('cotizaciones')
       .insert({
-        ...validatedFields.data,
+        paquete_id: validatedFields.data.paquete_id,
+        nombre_contacto: validatedFields.data.cliente_nombre,
+        email_contacto: validatedFields.data.cliente_email,
+        telefono_contacto: validatedFields.data.cliente_telefono || null,
+        nombre_institucion: validatedFields.data.escuela,
+        numero_personas: validatedFields.data.personas,
+        fecha_deseada: validatedFields.data.fecha_deseada || null,
+        incluye_lunch: validatedFields.data.incluye_lunch,
+        incluye_transporte: false,
+        mensaje: validatedFields.data.mensaje || null,
         estado: 'pendiente'
       })
       .select()
       .single()
 
     if (error) {
-      console.error('Error insertando cotización:', error)
+      console.error('Error insertando cotización:', error.message, error.details, error.hint)
       return { success: false, error: 'Ocurrió un error al guardar tu solicitud. Intenta nuevamente.' }
     }
 
@@ -90,9 +97,8 @@ export async function enviarCotizacion(prevState: unknown, formData: FormData) {
       const from = process.env.RESEND_FROM ?? 'El Nido <onboarding@resend.dev>'
       
       const { 
-        cliente_nombre, cliente_email, cliente_telefono, 
-        escuela, personas, fecha_deseada, 
-        incluye_lunch, incluye_transporte, mensaje 
+        cliente_nombre, cliente_email, cliente_telefono, escuela, personas, fecha_deseada,
+        incluye_lunch, mensaje 
       } = validatedFields.data
 
       const detallesHtml = `
@@ -103,7 +109,6 @@ export async function enviarCotizacion(prevState: unknown, formData: FormData) {
           <li><strong>Personas:</strong> ${personas}</li>
           <li><strong>Fecha:</strong> ${fecha_deseada || 'Por definir'}</li>
           <li><strong>Lunch:</strong> ${incluye_lunch ? 'Sí' : 'No'}</li>
-          <li><strong>Transporte:</strong> ${incluye_transporte ? 'Sí' : 'No'}</li>
           <li><strong>Mensaje:</strong> ${mensaje || 'N/A'}</li>
         </ul>
       `
