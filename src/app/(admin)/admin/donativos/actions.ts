@@ -105,6 +105,23 @@ export async function reiniciarMetasProgramadas(): Promise<TarjetaResult> {
   return { success: true }
 }
 
+export async function reiniciarMetaIndividual(id: string): Promise<TarjetaResult> {
+  const supabase = await createAdminSupabaseClient()
+  const { error } = await supabase
+    .from('tarjetas_donacion')
+    .update({ 
+      monto_recaudado: 0, 
+      meta_cumplida: false, 
+      updated_at: new Date().toISOString() 
+    })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+  revalidatePath('/admin/donativos')
+  revalidatePath('/donativos')
+  return { success: true }
+}
+
 export async function getSuscripcionesActivas() {
   const supabase = await createAdminSupabaseClient()
   const { data, error } = await supabase

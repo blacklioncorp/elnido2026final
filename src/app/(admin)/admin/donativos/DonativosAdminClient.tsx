@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Image from 'next/image'
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, Eye, X, Loader2, Upload } from 'lucide-react'
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, Eye, X, Loader2, Upload, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Database } from '@/lib/database.types'
 import {
@@ -12,6 +12,7 @@ import {
   deleteTarjetaDonacion,
   uploadEspecieImagen,
   reiniciarMetasProgramadas,
+  reiniciarMetaIndividual,
   type TarjetaInput,
 } from './actions'
 import { createStripeProductForCard } from '@/app/actions/donaciones'
@@ -282,6 +283,16 @@ export default function DonativosAdminClient({
     })
   }
 
+  const handleResetMeta = (id: string) => {
+    if (!confirm('¿Estás seguro de que quieres reiniciar el progreso de esta tarjeta a $0?')) return
+    startTransition(async () => {
+      const res = await reiniciarMetaIndividual(id)
+      if ('error' in res) { toast.error(res.error); return }
+      setTarjetas((prev) => prev.map((t) => t.id === id ? { ...t, monto_recaudado: 0, meta_cumplida: false } : t))
+      toast.success('Meta reiniciada')
+    })
+  }
+
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
@@ -457,6 +468,10 @@ export default function DonativosAdminClient({
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-center gap-2">
+                        <button onClick={() => handleResetMeta(t.id)} disabled={t.monto_recaudado === 0}
+                          className="p-1.5 text-forest-green-dark/40 hover:text-orange-500 transition-colors disabled:opacity-30 disabled:hover:text-forest-green-dark/40" title="Reiniciar meta a $0">
+                          <RefreshCw className="h-4 w-4" />
+                        </button>
                         <a href={`/donativos`} target="_blank" rel="noopener noreferrer"
                           className="p-1.5 text-forest-green-dark/40 hover:text-quetzal-blue transition-colors" title="Ver en /donativos">
                           <Eye className="h-4 w-4" />
