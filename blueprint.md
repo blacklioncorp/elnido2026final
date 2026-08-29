@@ -26,9 +26,15 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
 *   **Asistente WhatsApp:** Widget flotante en la UI para contactar al santuario vía WhatsApp, con número y mensaje configurables.
 
 *   **Paquetes Educativos y Grupos Escolares:** Página pública de cotización `/grupos` con catálogo filtrable y calculadora interactiva. Panel de administración en `/admin/grupos` con CRUD completo para crear, editar, eliminar y activar/desactivar paquetes pedagógicos, gestión de imágenes, actividades e itinerarios, y gestión de cotizaciones escolares con visor de detalle.
+*   **Dashboard de Padrinos (/guardian):** Panel interactivo para guardianes y padrinos con 4 KPIs de impacto, tabs de navegación (Resumen, Mis Apadrinamientos, Impulsa el Vuelo, Noticias del Nido, Próximos Eventos), mapa satelital interactivo multi-especie con Mapbox, gestión de suscripciones mensuales (pausar/reanudar/cancelar) y soporte para acceso con Google o enlaces mágicos con token.
 
 ## Recent Changes
 
+*   Implementado el **Dashboard de Padrinos completo en `/guardian`**:
+    *   Diseño mobile-first en tema oscuro `forest-green` y Framer Motion.
+    *   Cálculo automático de 4 KPIs de impacto (especies apadrinadas, total aportado, semanas activo, vidas impactadas).
+    *   Sistema de pestañas para gestión de apadrinamientos, mapa de *Impulsa el Vuelo*, noticias del blog y preventa de eventos.
+    *   Integración de acciones de servidor (`gestionarSuscripcionGuardian`, `getGuardianData`) y componente `GuardianMap` con Mapbox.
 *   Implementado CRUD completo de **Paquetes Educativos** en `/admin/grupos` con Server Actions (`createPaquete`, `updatePaquete`, `deletePaquete`, `togglePaqueteActivo`, `uploadPaqueteImagen`).
 *   Añadido panel lateral (Drawer) interactivo con gestión de información pedagógica, actividades e itinerarios dinámicos y subida de imágenes optimizadas hasta 10MB.
 *   Añadido modal de detalle para cotizaciones recibidas con enlace directo para responder por correo o contactar por WhatsApp.

@@ -729,6 +729,17 @@ export type Database = {
           meta_cumplida: boolean
           stripe_product_id: string | null
           vistas: number
+          seccion: 'amigos' | 'impulsa_vuelo' | string
+          liberada?: boolean | null
+          area_protegida?: string | null
+          lugar_destino?: string | null
+          latitud_origen?: number | null
+          longitud_origen?: number | null
+          latitud_destino?: number | null
+          longitud_destino?: number | null
+          latitud_actual?: number | null
+          longitud_actual?: number | null
+          fecha_estimada_liberacion?: string | null
           created_at: string
           updated_at: string
         }
@@ -747,6 +758,17 @@ export type Database = {
           meta_cumplida?: boolean
           stripe_product_id?: string | null
           vistas?: number
+          seccion?: 'amigos' | 'impulsa_vuelo' | string
+          liberada?: boolean | null
+          area_protegida?: string | null
+          lugar_destino?: string | null
+          latitud_origen?: number | null
+          longitud_origen?: number | null
+          latitud_destino?: number | null
+          longitud_destino?: number | null
+          latitud_actual?: number | null
+          longitud_actual?: number | null
+          fecha_estimada_liberacion?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -764,6 +786,17 @@ export type Database = {
           meta_cumplida?: boolean
           stripe_product_id?: string | null
           vistas?: number
+          seccion?: 'amigos' | 'impulsa_vuelo' | string
+          liberada?: boolean | null
+          area_protegida?: string | null
+          lugar_destino?: string | null
+          latitud_origen?: number | null
+          longitud_origen?: number | null
+          latitud_destino?: number | null
+          longitud_destino?: number | null
+          latitud_actual?: number | null
+          longitud_actual?: number | null
+          fecha_estimada_liberacion?: string | null
           updated_at?: string
         }
         Relationships: []
