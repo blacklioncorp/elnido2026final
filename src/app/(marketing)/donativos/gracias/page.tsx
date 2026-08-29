@@ -22,6 +22,8 @@ export default async function GraciasPage({ searchParams }: GraciasPageProps) {
   let especieNombre = ''
   let sessionOk = false
   let esRecurrente = false
+  let seccion = ''
+  let tarjetaId = ''
 
   if (session_id) {
     try {
@@ -38,15 +40,16 @@ export default async function GraciasPage({ searchParams }: GraciasPageProps) {
         }).format(monto)
 
         // Fetch species name if tarjeta_id exists
-        const tarjetaId = session.metadata?.tarjeta_id
+        tarjetaId = session.metadata?.tarjeta_id || ''
         if (tarjetaId) {
           const supabase = await createAdminSupabaseClient()
           const { data } = await supabase
             .from('tarjetas_donacion')
-            .select('nombre_especie, nombre_animal')
+            .select('nombre_especie, nombre_animal, seccion')
             .eq('id', tarjetaId)
             .maybeSingle()
           if (data) {
+            seccion = data.seccion || ''
             especieNombre = data.nombre_animal
               ? `${data.nombre_especie} "${data.nombre_animal}"`
               : data.nombre_especie
@@ -107,14 +110,25 @@ export default async function GraciasPage({ searchParams }: GraciasPageProps) {
             <ShareButtons shareText={shareText} shareUrl={shareUrl} />
 
             {/* Action buttons */}
-            <Link
-              href="/donativos"
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-off-white transition-all hover:brightness-110"
-              style={{ background: 'linear-gradient(135deg, #0B2B26 0%, #2E86AB 100%)' }}
-            >
-              <Heart className="h-4 w-4" />
-              Ver mi donativo en la barra
-            </Link>
+            {seccion === 'impulsa_vuelo' && tarjetaId ? (
+              <Link
+                href={`/impulsa-el-vuelo/${tarjetaId}?session_id=${session_id}`}
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-off-white transition-all hover:brightness-110"
+                style={{ background: 'linear-gradient(135deg, #D4A843 0%, #B8860B 100%)' }} // gold gradient for special map
+              >
+                <Heart className="h-4 w-4" />
+                Seguir el viaje de la especie
+              </Link>
+            ) : (
+              <Link
+                href="/donativos"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-off-white transition-all hover:brightness-110"
+                style={{ background: 'linear-gradient(135deg, #0B2B26 0%, #2E86AB 100%)' }}
+              >
+                <Heart className="h-4 w-4" />
+                Ver mi donativo en la barra
+              </Link>
+            )}
 
             <Link
               href="/donativos"

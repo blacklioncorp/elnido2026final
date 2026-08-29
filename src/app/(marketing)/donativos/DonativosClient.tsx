@@ -18,7 +18,8 @@ interface Donante {
 }
 
 interface DonativosClientProps {
-  tarjetas: TarjetaDonacionRow[]
+  tarjetasAmigos: TarjetaDonacionRow[]
+  tarjetasImpulsa: TarjetaDonacionRow[]
   donantesMap: Record<string, Donante[]>
   videoUrl?: string | null
   headerImage?: string
@@ -40,7 +41,7 @@ const cardVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 25 } },
 }
 
-export default function DonativosClient({ tarjetas, donantesMap, videoUrl, headerImage }: DonativosClientProps) {
+export default function DonativosClient({ tarjetasAmigos, tarjetasImpulsa, donantesMap, videoUrl, headerImage }: DonativosClientProps) {
   return (
     <div className="min-h-screen bg-off-white">
       {/* ── HERO ── */}
@@ -109,24 +110,34 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl, heade
         ctaLink="#tarjetas"
       />
 
-      {/* ── CARDS SECTION ── */}
-      <section id="tarjetas" className="max-w-7xl mx-auto px-4 py-16">
-        {/* Sección de Confianza */}
-        <div className="bg-quetzal-blue/10 rounded-2xl p-6 md:p-8 mb-12 flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-4xl mx-auto text-center md:text-left border border-quetzal-blue/20 shadow-sm">
+      {/* Sección de Confianza */}
+      <div className="max-w-4xl mx-auto px-4 mt-8">
+        <div className="bg-quetzal-blue/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-8 text-center md:text-left border border-quetzal-blue/20 shadow-sm">
           <div className="w-16 h-16 rounded-full bg-quetzal-blue/20 text-quetzal-blue flex items-center justify-center shrink-0 mx-auto md:mx-0">
             <Microscope size={32} />
           </div>
           <div>
             <h3 className="text-xl font-bold text-forest-green-dark mb-2">Respaldado por ciencia y amor</h3>
             <p className="text-forest-green-dark/70 text-lg mb-4 italic">
-              "El Dr. Jesús Estudillo dedicó 40 años a la conservación. Tu donativo continúa su legado"
+              &quot;El Dr. Jesús Estudillo dedicó 40 años a la conservación. Tu donativo continúa su legado&quot;
             </p>
             <Link href="/quienes-somos" className="text-quetzal-blue font-semibold hover:underline inline-block">
               Conoce más sobre el fundador &rarr;
             </Link>
           </div>
         </div>
-        {tarjetas.length === 0 ? (
+      </div>
+
+      {/* ── SECCIÓN 1: APADRINA A UN AMIGO ── */}
+      <section id="amigos" className="max-w-7xl mx-auto px-4 py-16">
+        <div className="flex items-center gap-3 justify-center mb-10">
+          <div className="bg-conservation-gold/20 text-conservation-gold p-3 rounded-full">
+            🐾
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-forest-green-dark">Apadrina a un Amigo</h2>
+        </div>
+        
+        {tarjetasAmigos.length === 0 ? (
           /* Empty State */
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -153,7 +164,7 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl, heade
           <>
             <div className="text-center mb-12">
               <p className="text-forest-green-dark/60 text-sm font-medium">
-                {tarjetas.length} especie{tarjetas.length !== 1 ? 's' : ''} esperando tu apoyo
+                {tarjetasAmigos.length} amigo{tarjetasAmigos.length !== 1 ? 's' : ''} esperando tu apoyo
               </p>
             </div>
             <motion.div
@@ -162,7 +173,7 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl, heade
               animate="show"
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
-              {tarjetas.map((tarjeta) => (
+              {tarjetasAmigos.map((tarjeta) => (
                 <motion.div key={tarjeta.id} variants={cardVariants}>
                   <TarjetaDonacion
                     tarjeta={tarjeta}
@@ -171,22 +182,53 @@ export default function DonativosClient({ tarjetas, donantesMap, videoUrl, heade
                 </motion.div>
               ))}
             </motion.div>
-
-            {/* Footer CTA */}
-            <div className="text-center mt-16 pt-8 border-t border-forest-green-dark/10">
-              <p className="text-forest-green-dark/50 text-sm mb-4">
-                ¿Prefieres una donación general al santuario?
-              </p>
-              <Link
-                href="/donar"
-                className="inline-flex items-center gap-2 text-quetzal-blue font-semibold text-sm hover:underline"
-              >
-                Ir a donación general →
-              </Link>
-            </div>
           </>
         )}
       </section>
+
+      {/* ── SECCIÓN 2: IMPULSA EL VUELO ── */}
+      {tarjetasImpulsa.length > 0 && (
+        <section id="impulsa-el-vuelo" className="max-w-7xl mx-auto px-4 pb-16 pt-8 border-t border-forest-green-dark/10">
+          <div className="flex flex-col items-center justify-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-quetzal-blue/15 border border-quetzal-blue/30 text-quetzal-blue text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+              🦅 En proceso de liberación
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-forest-green-dark">Impulsa el Vuelo</h2>
+            <p className="text-forest-green-dark/70 text-center max-w-2xl mt-4">
+              Conviértete en Guardián de una especie en su viaje de regreso a la naturaleza. Sigue su progreso paso a paso a través de nuestro mapa interactivo.
+            </p>
+          </div>
+          
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {tarjetasImpulsa.map((tarjeta) => (
+              <motion.div key={tarjeta.id} variants={cardVariants}>
+                <TarjetaDonacion
+                  tarjeta={tarjeta}
+                  donantesRecientes={donantesMap[tarjeta.id] ?? []}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+      )}
+
+      {/* Footer CTA */}
+      <div className="text-center pb-16 pt-8 border-t border-forest-green-dark/10">
+        <p className="text-forest-green-dark/50 text-sm mb-4">
+          ¿Prefieres una donación general al santuario?
+        </p>
+        <Link
+          href="/donar"
+          className="inline-flex items-center gap-2 text-quetzal-blue font-semibold text-sm hover:underline"
+        >
+          Ir a donación general →
+        </Link>
+      </div>
     </div>
   )
 }
