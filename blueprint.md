@@ -25,8 +25,13 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
 *   **Control de Cupo:** Sistema de límite diario (cupo) para la venta de boletos usando funciones atómicas (RPC) en PostgreSQL.
 *   **Asistente WhatsApp:** Widget flotante en la UI para contactar al santuario vía WhatsApp, con número y mensaje configurables.
 
+*   **Paquetes Educativos y Grupos Escolares:** Página pública de cotización `/grupos` con catálogo filtrable y calculadora interactiva. Panel de administración en `/admin/grupos` con CRUD completo para crear, editar, eliminar y activar/desactivar paquetes pedagógicos, gestión de imágenes, actividades e itinerarios, y gestión de cotizaciones escolares con visor de detalle.
+
 ## Recent Changes
 
+*   Implementado CRUD completo de **Paquetes Educativos** en `/admin/grupos` con Server Actions (`createPaquete`, `updatePaquete`, `deletePaquete`, `togglePaqueteActivo`, `uploadPaqueteImagen`).
+*   Añadido panel lateral (Drawer) interactivo con gestión de información pedagógica, actividades e itinerarios dinámicos y subida de imágenes optimizadas hasta 10MB.
+*   Añadido modal de detalle para cotizaciones recibidas con enlace directo para responder por correo o contactar por WhatsApp.
 *   Implementada la tabla `donaciones` unificada y la tabla `tarjetas_donacion` para el programa "Guardián".
 *   Actualizada la página `/donar` para usar Stripe Checkout unificado (Opción B).
 *   Creada la página `/donativos` con UI interactiva usando Framer Motion y Tailwind CSS.
