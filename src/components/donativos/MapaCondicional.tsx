@@ -1,11 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase'
 import { verificarPadrino } from '@/app/actions/liberacion'
-import MapaInteractivo from './MapaInteractivo'
 import MapaEstaticoConBlur from './MapaEstaticoConBlur'
 import type { Database } from '@/lib/database.types'
+
+const MapaInteractivo = dynamic(() => import('./MapaInteractivo'), { 
+  ssr: false,
+  loading: () => <div className="h-48 rounded-xl bg-gray-200 animate-pulse flex items-center justify-center text-sm text-forest-green-dark/50">Cargando mapa interactivo...</div>
+})
 
 type TarjetaDonacion = Database['public']['Tables']['tarjetas_donacion']['Row']
 
