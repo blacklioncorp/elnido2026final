@@ -40,38 +40,35 @@ export function sanitizeHtml(text: string): string {
 }
 
 /**
- * Deduce la URL de la versión WebP optimizada (card o large) a partir de la original.
- * Ej: https://.../especies/123.jpg -> https://.../especies/123-card.webp
+ * Devuelve la URL de imagen optimizada.
+ * - Imágenes antiguas (con -original.webp): convierte al tamaño solicitado (-card / -large).
+ * - Imágenes nuevas (subidas con el sistema actual): ya vienen optimizadas, se devuelven tal cual.
  */
-export function getOptimizedUrl(originalUrl: string | null | undefined, size: 'card' | 'large'): string {
+export function getOptimizedUrl(originalUrl: string | null | undefined, _size: 'card' | 'large'): string {
   if (!originalUrl) return ''
-  // Si ya es un webp con -card o -large, no lo tocamos
+
+  // Variantes antiguas ya procesadas: devolver sin cambios
   if (originalUrl.includes('-card.webp') || originalUrl.includes('-large.webp')) {
     return originalUrl
   }
-  
+
   try {
     const url = new URL(originalUrl)
     const pathname = url.pathname
-    
-    // Si ya termina en -original.webp, lo reemplazamos directamente
+
+    // Solo las imágenes antiguas tienen el sufijo -original.webp → convertir al tamaño pedido
     if (pathname.endsWith('-original.webp')) {
-      url.pathname = pathname.replace('-original.webp', `-${size}.webp`)
+      url.pathname = pathname.replace('-original.webp', `-${_size}.webp`)
       return url.toString()
     }
 
-    const lastDotIndex = pathname.lastIndexOf('.')
-    if (lastDotIndex !== -1) {
-      const pathWithoutExt = pathname.substring(0, lastDotIndex)
-      url.pathname = `${pathWithoutExt}-${size}.webp`
-      return url.toString()
-    }
-  } catch (e) {
+    // Imágenes nuevas: una sola versión optimizada, devolver la URL original intacta
+    return originalUrl
+  } catch {
+    // Si no es URL válida y tiene -original, intentar reemplazo por string
     if (originalUrl.endsWith('-original.webp')) {
-      return originalUrl.replace('-original.webp', `-${size}.webp`)
+      return originalUrl.replace('-original.webp', `-${_size}.webp`)
     }
-    // Si no es URL válida o falla el parsing, intentamos por regex básico
-    return originalUrl.replace(/\.[^/.]+$/, `-${size}.webp`)
+    return originalUrl
   }
-  return originalUrl
 }
