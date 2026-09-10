@@ -71,16 +71,15 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
     *   *Feed de Actividad Reciente:* Monitoreo unificado de las últimas transacciones en tiempo real combinando compras de boletos, donaciones por especie y donaciones generales con nombres de clientes, desglose de ítems, montos e indicador de tiempo transcurrido.
 *   **Módulo de Reportes y Analítica (`/admin/reportes`):**
     *   *Desglose con Descuentos Reales:* Integración precisa del monto final pagado (`compras.total`) para ventas online en lugar del precio de lista sin descuento.
-    *   *Columnas Detalladas:* Visualización clara de **Subtotal** (precio original), **Descuento** (monto monetario ahorrado con badge de cupón/porcentaje) y **Total** (monto neto ingresado).
-    *   *Exportación CSV:* Inclusión de subtotal, descuento, total y código de descuento utilizado en los reportes exportables.
-    *   *Consistencia Total:* Alineación de cifras entre el módulo de reportes generales y la pestaña de Ventas en `/admin/boletos`.
-    *   *Paginación Idéntica a Ventas:* Paginación client-side de 15 filas por página con selector numérico, flechas y contador de registros.
+    *   *Columnas Detalladas:* Visualización clara de **Subtotal** (precio original), **Descuento** (monto monetario ahorrado con badge de cupón/porcentaje)
+    *   **Corrección de Zona Horaria en Boletera (`formatDate` & `fechaVisita`):** Se resolvió el bug donde seleccionar una fecha en el calendario (`YYYY-MM-DD`) restaba un día en el carrito y en el wizard de pasos debido a la interpretación por defecto de UTC en JavaScript (`new Date("YYYY-MM-DD")` restaba 6 horas en México). La función `formatDate` ahora procesa fechas calendario en horario local evitando cualquier desfase.
+*   **Corrección de Z-Index en Menú Móvil (`MobileMenu.tsx`):** Se elevó el z-index del botón flotante y menú desplegable a `z-50` para evitar que el overlay de desenfoque (`z-40`) bloquee la interacción táctil en dispositivos móviles.
+*   **Optimización de URLs de Imágenes (`getOptimizedUrl`):** Se corrigió la generación de URLs en `utils.ts` para que las imágenes recién subidas a Supabase (que vienen optimizadas en una sola versión) no agreguen sufijos inexistentes `-card.webp` / `-large.webp`.
 *   **Protección Anti-Bot y Anti-Spam (Cloudflare Turnstile):**
     *   Integración de `@marsidev/react-turnstile` mediante el componente reutilizable `TurnstileCaptcha.tsx` en formularios públicos (`FormularioDonacion.tsx`, `CalculadoraCotizacion.tsx`, `ContactoPage` y `DonarPage`).
     *   Modo tolerante de desarrollo/placeholder: cuando las claves son `'pendiente_cloudflare'`, simula verificación inmediata para no bloquear el flujo ni deshabilitar botones en pruebas locales.
     *   Validación robusta en el backend (`verifyTurnstile` en `src/lib/turnstile.ts`) en las Server Actions correspondientes (`createDonacionCheckout`, `createDonacionGenericaCheckout`, `enviarCotizacion`, `enviarMensajeContacto`) consultando el endpoint oficial `https://challenges.cloudflare.com/turnstile/v0/siteverify` una vez configuradas las credenciales de producción.
 *   Corregidos los tipos en `database.types.ts` añadiendo relaciones `Relationships` en `ventas_pos` y `compras` para resolver errores de TS con Supabase.
-*   Creado el archivo `N8N_SETUP.md` con la documentación para conectar los flujos de N8N.
 *   **Sección "Visítanos" con Mapa Interactivo y Botones de Transporte:**
     *   *Componente Mapa (`/src/components/ubicacion/MapaVisitanos.tsx`):* Integración con Mapbox GL (`mapbox://styles/mapbox/outdoors-v12`) centrada en las coordenadas exactas de El Nido Aviario (`[19.3176683, -98.8917283]`, zoom 14), con marcador interactivo circular dorado de guacamaya (`🦜`) y popup informativo con dirección.
     *   *Botones de Transporte (`/src/components/ubicacion/BotonesTransporte.tsx`):* Grid responsive (1 columna en móvil / 3 columnas en escritorio) con logos oficiales vectoriales SVG de Google Maps, Waze y Uber enlazando directamente a las rutas de navegación con coordenadas fijas.

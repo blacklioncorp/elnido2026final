@@ -12,12 +12,30 @@ export function formatCurrency(amount: number, currency = "MXN"): string {
   }).format(amount);
 }
 
-export function formatDate(date: string | Date): string {
+export function formatDate(date: string | Date | null | undefined): string {
+  if (!date) return "";
+
+  let d: Date;
+  if (typeof date === "string") {
+    // Si es formato YYYY-MM-DD o YYYY/MM/DD (fecha pura sin hora)
+    const match = date.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+    if (match) {
+      const [, y, m, day] = match;
+      d = new Date(Number(y), Number(m) - 1, Number(day), 12, 0, 0);
+    } else {
+      d = new Date(date);
+    }
+  } else {
+    d = date;
+  }
+
+  if (isNaN(d.getTime())) return "";
+
   return new Intl.DateTimeFormat("es-MX", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  }).format(new Date(date));
+  }).format(d);
 }
 
 export function slugify(text: string): string {
