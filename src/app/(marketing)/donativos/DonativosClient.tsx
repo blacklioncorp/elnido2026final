@@ -1,0 +1,238 @@
+'use client'
+
+import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { Heart, ExternalLink, Microscope } from 'lucide-react'
+import type { Database } from '@/lib/database.types'
+import TarjetaDonacion from '@/components/donativos/TarjetaDonacion'
+import VideoTestimonial from '@/components/home/VideoTestimonial'
+import Image from 'next/image'
+
+type TarjetaDonacionRow = Database['public']['Tables']['tarjetas_donacion']['Row']
+
+interface Donante {
+  donante_username: string | null
+  donante_nombre: string
+  monto: number
+  created_at: string
+}
+
+interface DonativosClientProps {
+  tarjetasAmigos: TarjetaDonacionRow[]
+  tarjetasImpulsa: TarjetaDonacionRow[]
+  donantesMap: Record<string, Donante[]>
+  videoUrl?: string | null
+  headerImage?: string
+}
+
+import type { Variants } from 'framer-motion'
+
+const containerVariants: Variants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+}
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 25 } },
+}
+
+export default function DonativosClient({ tarjetasAmigos, tarjetasImpulsa, donantesMap, videoUrl, headerImage }: DonativosClientProps) {
+  return (
+    <div className="min-h-screen bg-off-white">
+      {/* ── HERO ── */}
+      <section
+        className="relative px-4 py-24 text-center overflow-hidden"
+        style={!headerImage ? {
+          background: 'linear-gradient(160deg, #0B2B26 0%, #1A4A3A 50%, #0B2B26 100%)',
+        } : undefined}
+      >
+        {headerImage && (
+          <Image
+            src={headerImage}
+            alt="Hero Background"
+            fill
+            className="object-cover blur-[3px] z-0"
+            priority
+          />
+        )}
+        {headerImage && (
+          <div className="absolute inset-0 bg-forest-green-dark/80 z-10" />
+        )}
+        {/* Decorative circles */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-conservation-gold/5 blur-3xl pointer-events-none z-10" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-quetzal-blue/5 blur-3xl pointer-events-none z-10" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="relative z-20 max-w-3xl mx-auto drop-shadow-lg"
+        >
+          <div className="inline-flex items-center gap-2 bg-conservation-gold/15 border border-conservation-gold/30 text-conservation-gold text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            <Heart className="h-3 w-3 fill-conservation-gold" />
+            Programa Guardián
+          </div>
+          <h1 className="text-4xl md:text-6xl font-extrabold text-off-white mb-5 leading-tight tracking-tight">
+            Se parte de su {' '}
+            <span
+              className="relative"
+              style={{
+                background: 'linear-gradient(90deg, #D4A843, #2E86AB)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Historia
+            </span>
+          </h1>
+          <p className="text-off-white/70 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+            Elige una historia, hazte Guardián, sigue su progreso
+          </p>
+        </motion.div>
+
+        {/* Wave divider */}
+        <div className="absolute bottom-0 left-0 right-0 z-20">
+          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0 60V30C360 0 720 60 1080 30L1440 0V60H0Z" fill={videoUrl ? "#0B2B26" : "#F7F3E8"} />
+          </svg>
+        </div>
+      </section>
+
+      <VideoTestimonial
+        videoUrl={videoUrl}
+        titulo="Del Nido al Vuelo"
+        frase="Cada rescate y cuidado en El Nido tiene un propósito supremo: rehabilitar a las especies, devolverles sus alas y reinsertarlas con amor en su hábitat natural."
+        ctaTexto="Apadrinar una especie"
+        ctaLink="#del-nido-al-vuelo"
+      />
+
+      {/* Sección de Confianza */}
+      <div className="max-w-4xl mx-auto px-4 mt-8">
+        <div className="bg-quetzal-blue/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-8 text-center md:text-left border border-quetzal-blue/20 shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-quetzal-blue/20 text-quetzal-blue flex items-center justify-center shrink-0 mx-auto md:mx-0">
+            <Microscope size={32} />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-forest-green-dark mb-2">Respaldado por ciencia y amor</h3>
+            <p className="text-forest-green-dark/70 text-lg mb-4 italic">
+              &quot;El Dr. Jesús Estudillo dedicó 40 años a la conservación. Tu donativo continúa su legado&quot;
+            </p>
+            <Link href="/quienes-somos" className="text-quetzal-blue font-semibold hover:underline inline-block">
+              Conoce más sobre el fundador &rarr;
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ── SECCIÓN 1: DEL NIDO AL VUELO ── */}
+      <section id="del-nido-al-vuelo" className="max-w-7xl mx-auto px-4 py-16">
+        <div className="flex flex-col items-center justify-center mb-10 text-center">
+          <div className="bg-conservation-gold/20 text-conservation-gold p-3 rounded-full mb-3 text-2xl">
+            🕊️
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-forest-green-dark">Protegiendo un Amigo</h2>
+          <p className="text-forest-green-dark/70 text-sm sm:text-base max-w-xl mt-2">
+            Acompaña a nuestras especies en su proceso de rehabilitación y desarrollo para devolverlas con dignidad y amor a su hogar natural.
+          </p>
+        </div>
+
+        {tarjetasAmigos.length === 0 ? (
+          /* Empty State */
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-24 max-w-md mx-auto"
+          >
+            <div className="text-6xl mb-6">🦎</div>
+            <h2 className="text-2xl font-bold text-forest-green-dark mb-3">
+              Pronto nuevas especies
+            </h2>
+            <p className="text-forest-green-dark/60 mb-8">
+              Estamos preparando nuevas historias de conservación. ¡Síguenos y sé el primero en enterarte!
+            </p>
+            <Link
+              href="/donar"
+              className="inline-flex items-center gap-2 bg-forest-green-dark text-off-white font-bold px-6 py-3 rounded-xl hover:bg-forest-green-light transition-colors"
+            >
+              <Heart className="h-4 w-4" />
+              Hacer una donación general
+              <ExternalLink className="h-4 w-4" />
+            </Link>
+          </motion.div>
+        ) : (
+          <>
+            <div className="text-center mb-12">
+              <p className="text-forest-green-dark/60 text-sm font-medium">
+                {tarjetasAmigos.length} amigo{tarjetasAmigos.length !== 1 ? 's' : ''} esperando tu apoyo
+              </p>
+            </div>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {tarjetasAmigos.map((tarjeta) => (
+                <motion.div key={tarjeta.id} variants={cardVariants}>
+                  <TarjetaDonacion
+                    tarjeta={tarjeta}
+                    donantesRecientes={donantesMap[tarjeta.id] ?? []}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </section>
+
+      {/* ── SECCIÓN 2: IMPULSA EL VUELO ── */}
+      {tarjetasImpulsa.length > 0 && (
+        <section id="impulsa-el-vuelo" className="max-w-7xl mx-auto px-4 pb-16 pt-8 border-t border-forest-green-dark/10">
+          <div className="flex flex-col items-center justify-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-quetzal-blue/15 border border-quetzal-blue/30 text-quetzal-blue text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+              🦅 En proceso de liberación
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-forest-green-dark">Del Nido al Vuelo</h2>
+            <p className="text-forest-green-dark/70 text-center max-w-2xl mt-4">
+              Conviértete en Guardián de una especie en su viaje de regreso a la naturaleza. Sigue su progreso paso a paso a través de nuestro mapa interactivo.
+            </p>
+          </div>
+
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {tarjetasImpulsa.map((tarjeta) => (
+              <motion.div key={tarjeta.id} variants={cardVariants}>
+                <TarjetaDonacion
+                  tarjeta={tarjeta}
+                  donantesRecientes={donantesMap[tarjeta.id] ?? []}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+      )}
+
+      {/* Footer CTA */}
+      <div className="text-center pb-16 pt-8 border-t border-forest-green-dark/10">
+        <p className="text-forest-green-dark/50 text-sm mb-4">
+          ¿Prefieres una donación general al santuario?
+        </p>
+        <Link
+          href="/donar"
+          className="inline-flex items-center gap-2 text-quetzal-blue font-semibold text-sm hover:underline"
+        >
+          Ir a donación general →
+        </Link>
+      </div>
+    </div>
+  )
+}

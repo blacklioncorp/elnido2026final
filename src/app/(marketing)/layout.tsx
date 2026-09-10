@@ -1,0 +1,19 @@
+import { ReactNode } from 'react';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/marketing/Footer';
+import WhatsAppWidget from '@/components/chatbot/WhatsAppWidget';
+import MobileMenu from '@/components/layout/MobileMenu';
+import AudioAmbiental from '@/components/audio/AudioAmbiental';
+
+export default function MarketingLayout({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-1 pt-20">{children}</main>
+      <Footer />
+      <AudioAmbiental />
+      <WhatsAppWidget />
+      <MobileMenu />
+    </div>
+  );
+}
