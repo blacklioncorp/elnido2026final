@@ -259,9 +259,9 @@ export default function EntradaSelector({
             value={fechaVisita ?? ''}
             onChange={(e) => handleFechaChange(e.target.value)}
             suppressHydrationWarning
-            style={{ colorScheme: 'light' }}
+          style={{ colorScheme: 'light', color: '#1a3b2a' }}
             className={cn(
-              "w-full rounded-xl border bg-white px-4 py-3 text-base sm:text-sm text-forest-green-dark font-bold focus:outline-none transition-all cursor-pointer shadow-sm [color-scheme:light]",
+              "w-full rounded-xl border bg-white px-4 py-3 text-base sm:text-sm text-forest-green-dark font-bold focus:outline-none transition-all cursor-pointer shadow-sm [color-scheme:light] [&::-webkit-calendar-picker-indicator]:opacity-70",
               !fechaVisita
                 ? "border-conservation-gold ring-2 ring-conservation-gold/20"
                 : mensajeError
