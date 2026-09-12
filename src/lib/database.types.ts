@@ -57,6 +57,8 @@ export type Database = {
           email?: string | null
           activo?: boolean
         }
+        Relationships: []
+      }
       dias_especiales: {
         Row: {
           id: string

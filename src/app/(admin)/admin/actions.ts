@@ -46,13 +46,14 @@ export async function getDashboardData(): Promise<{
   if (donacionesRecurrentes && donacionesRecurrentes.length > 0) {
     const activeEmails = new Set(
       donacionesRecurrentes
-        .filter(d => (d.es_recurrente && d.estado_suscripcion !== 'cancelada') || d.estado_suscripcion === 'activa')
-        .map(d => d.donante_email)
+        .filter((d: any) => (d.es_recurrente && d.estado_suscripcion !== 'cancelada') || d.estado_suscripcion === 'activa')
+        .map((d: any) => d.donante_email)
+        .filter(Boolean)
     )
     guardianesActivos = activeEmails.size
     // Si no hay suscripciones activas registradas, contar donantes únicos totales
     if (guardianesActivos === 0) {
-      guardianesActivos = new Set(donacionesRecurrentes.map(d => d.donante_email)).size
+      guardianesActivos = new Set(donacionesRecurrentes.map((d: any) => d.donante_email).filter(Boolean)).size
     }
   }
 
