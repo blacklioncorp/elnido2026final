@@ -57,6 +57,28 @@ export type Database = {
           email?: string | null
           activo?: boolean
         }
+      dias_especiales: {
+        Row: {
+          id: string
+          fecha: string
+          tipo: 'feriado' | 'evento' | 'vacaciones' | 'cerrado'
+          descripcion: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          fecha: string
+          tipo: 'feriado' | 'evento' | 'vacaciones' | 'cerrado'
+          descripcion?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          fecha?: string
+          tipo?: 'feriado' | 'evento' | 'vacaciones' | 'cerrado'
+          descripcion?: string | null
+          created_at?: string
+        }
         Relationships: []
       }
       fauna: {

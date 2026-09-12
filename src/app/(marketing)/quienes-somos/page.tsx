@@ -98,10 +98,10 @@ export default function QuienesSomosPage() {
                 <div className="space-y-6">
                   {[
                     { year: '1960s', title: 'Graduado UNAM - Médico Veterinario Zootecnista', icon: GraduationCap },
+                    { year: '1970', title: 'Funda Granja La Siberia, lo que se convertiría en El Nido', icon: Heart },
                     { year: '1970s', title: 'Ohio State University - Patología Aviar', icon: School },
                     { year: '1975', title: 'Descubre Crax estudilloi en Bolivia', icon: Globe },
                     { year: '1993', title: 'Premio Global 500 de las Naciones Unidas', icon: Award },
-                    { year: '2000s', title: 'Funda El Nido', icon: Heart },
                     { year: '2026', title: 'Su legado sigue vivo', icon: Feather },
                   ].map((item, i) => (
                     <div key={i} className="flex flex-col md:flex-row items-center md:items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm shadow-xl transition-all hover:bg-white/10">

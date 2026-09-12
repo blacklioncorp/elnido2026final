@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Ticket, CalendarDays, ShoppingCart, Shield, PartyPopper, Tag } from 'lucide-react';
 import TiposEntradaTab from '@/components/admin/boletos/TiposEntradaTab';
 import MembresiasTab from '@/components/admin/boletos/MembresiasTab';
@@ -10,7 +11,19 @@ import VentasTab from '@/components/admin/boletos/VentasTab';
 import DescuentosTab from '@/components/admin/boletos/DescuentosTab';
 
 export default function BoletosAdminClient() {
-  const [activeTab, setActiveTab] = useState<'entradas' | 'membresias' | 'dias_venta' | 'eventos' | 'descuentos' | 'ventas'>('entradas');
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab') as 'entradas' | 'membresias' | 'dias_venta' | 'eventos' | 'descuentos' | 'ventas' | null;
+  const searchParam = searchParams.get('search') || '';
+
+  const [activeTab, setActiveTab] = useState<'entradas' | 'membresias' | 'dias_venta' | 'eventos' | 'descuentos' | 'ventas'>(
+    tabParam || 'entradas'
+  );
+
+  useEffect(() => {
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
   
   const tabs = [
     { id: 'entradas' as const, label: 'Tipos de Entrada', icon: Ticket },
@@ -59,7 +72,7 @@ export default function BoletosAdminClient() {
         {activeTab === 'dias_venta' && <DiasVentaTab />}
         {activeTab === 'eventos' && <EventosTab />}
         {activeTab === 'descuentos' && <DescuentosTab />}
-        {activeTab === 'ventas' && <VentasTab />}
+        {activeTab === 'ventas' && <VentasTab initialSearch={searchParam} />}
       </div>
     </div>
   );

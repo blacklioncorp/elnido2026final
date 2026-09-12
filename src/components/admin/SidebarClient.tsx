@@ -8,7 +8,7 @@ import {
   LayoutDashboard, Bird, BookOpen, Users, Heart,
   BookMarked, Settings, LogOut, ChevronRight, GraduationCap,
   Store, Package, Wallet, BarChart3, Leaf, CalendarClock,
-  Menu, X, Ticket
+  Menu, X, Ticket, CalendarDays
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { adminCanAccess, getAdminRoleBadgeColor, ADMIN_ROLES, type AdminRole } from '@/lib/roles'
@@ -31,6 +31,7 @@ const ALL_ITEMS = [
   { href: '/admin/caja',         label: 'Punto de Venta',      icon: Store,           modulo: 'pos',           group: 'Operaciones' },
   { href: '/admin/caja/productos',label: 'Catálogo POS',       icon: Package,         modulo: 'pos',           group: 'Operaciones' },
   { href: '/admin/boletos',      label: 'Boletos',             icon: Ticket,          modulo: 'boletos',       group: 'Operaciones' },
+  { href: '/admin/boletos/calendario', label: 'Calendario',    icon: CalendarDays,    modulo: 'boletos',       group: 'Operaciones' },
   { href: '/admin/cajas',        label: 'Cajas',               icon: Wallet,          modulo: 'cajas',         group: 'Administración' },
   { href: '/admin/reportes',     label: 'Reportes',            icon: BarChart3,       modulo: 'reportes',      group: 'Administración' },
 ]

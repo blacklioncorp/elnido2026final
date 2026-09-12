@@ -49,10 +49,10 @@ interface CompraConDetalles {
   clientes?: Cliente | null;
 }
 
-export default function VentasTab() {
+export default function VentasTab({ initialSearch = '' }: { initialSearch?: string }) {
   const [ventas, setVentas] = useState<CompraConDetalles[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(initialSearch);
   const [statusFilter, setStatusFilter] = useState<string>('todos');
   const [selectedVenta, setSelectedVenta] = useState<CompraConDetalles | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,11 +70,18 @@ export default function VentasTab() {
     cargarVentas();
   }, []);
 
+  useEffect(() => {
+    if (initialSearch) {
+      setSearch(initialSearch);
+    }
+  }, [initialSearch]);
+
   // Filtrado — al cambiar filtros, volver a página 1
   const ventasFiltradas = ventas.filter((v) => {
     const matchesSearch = 
       (v.clientes?.nombre && v.clientes.nombre.toLowerCase().includes(search.toLowerCase())) ||
       (v.clientes?.email && v.clientes.email.toLowerCase().includes(search.toLowerCase())) ||
+      (v.fecha_visita && v.fecha_visita.includes(search)) ||
       v.id.toLowerCase().includes(search.toLowerCase()) ||
       (v.compra_items && v.compra_items.some(i => i.nombre.toLowerCase().includes(search.toLowerCase())));
 

@@ -15,10 +15,7 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
 ### Features
 
 *   **Home Page:** The home page is a visually stunning introduction to the sanctuary, with a hero section, a features section, and a call to action.
-*   **Santuario Page:** The santuario page provides more information about the sanctuary, including its history, mission, and team.
-*   **Blog:** The blog is a place for the sanctuary to share news, stories, and updates with its visitors.
-*   **Contact Page:** The contact page provides a simple way for visitors to get in touch with the sanctuary.
-
+*   **Quiénes Somos (`/quienes-somos`):** Biografía del Dr. Jesús Estudillo López, línea de tiempo histórica (con el hito de 1970: Fundación de Granja La Siberia, génesis de El Nido) y carrusel de fotografías históricas con lightbox.
 *   **Boletera & POS:** Sistema de venta de boletos, tienda física (POS) y control de cajas. Botón y acceso directo a `/boletos` activo en el Header principal de navegación pública.
 *   **Módulo de Administración de Boletos (`/admin/boletos`):** Panel administrativo completo para gestión de boletos con cinco secciones principales:
     *   *Tipos de Entrada:* Catálogo de admisiones regulares y paquetes familiares con CRUD reactivo (React Hook Form + Zod), cálculo de precios, conmutador de estado activo/inactivo y borrado inteligente con protección de historial contable.
@@ -26,6 +23,12 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
     *   *Días de Venta de Boletos:* Configuración de días de la semana permitidos para venta de admisiones en el santuario (0=domingo a 6=sábado). Toggles conmutables por día con persistencia inmediata en la tabla `dias_venta`.
     *   *Eventos Especiales:* Gestión de eventos temáticos, nocturnos y talleres con configuración de fecha, hora, cupo máximo y tarifas por boleto.
     *   *Registro de Ventas:* Monitor de transacciones y compras de boletos en tiempo real con KPIs de recaudación, desglose de items y clientes, filtros por estado y texto, y paginación con controles numéricos.
+*   **Calendario de Visitas Programadas (`/admin/boletos/calendario`):**
+    *   *KPIs Superiores:* Visitantes del mes seleccionado, conteo de días con visitas activas, día más ocupado (fecha + visitantes) y promedio de visitantes diarios.
+    *   *Navegación y Filtros:* Selector de mes y año con botones de desplazamiento y dropdowns, botón "Hoy" y filtro por categoría (Todos los tipos, Entradas Generales, Paquetes Familiares, Eventos Temáticos y Membresías Guardián).
+    *   *Cuadrícula Mensual (7 Columnas Lunes a Domingo):* Visualización clara del calendario mensual con identificación de días feriados oficiales de México (🇲🇽) provenientes de la tabla `dias_especiales`, insignia de "Hoy", badges con conteo de personas (`XX👥`), y mapa de calor por ocupación (0 = neutral, 1-20 = verde, 21-50 = ámbar, 51-100 = naranja, +100 = rojo).
+    *   *Modal de Detalle del Día:* Vista ampliada al hacer clic sobre cualquier fecha con total de visitantes, indicador de feriado, desglose por categoría y lista de las últimas reservas con cliente, email, personas, boleto, total y hora. Botón de acceso directo para "Ver todas las reservas" en el módulo de ventas.
+    *   *Gestión de Días Especiales:* Modal para dar de alta o eliminar días festivos, eventos o periodos cerrados manualmente con persistencia en Supabase.
 *   **Restricción de Días de Venta en Boletera Pública (`/boletos`):**
     *   Validación reactiva en el selector de fecha (`EntradaSelector.tsx`): si el usuario selecciona una fecha cuyo día de la semana está deshabilitado, se bloquea la selección, se muestra alerta visual y se notifica vía `toast`.
     *   Visualización de días de la semana habilitados vs deshabilitados con formato tachado (`line-through`) y gris.
