@@ -123,6 +123,7 @@ export async function getGuardianData(token?: string): Promise<GuardianData | nu
     for (const d of donacionesList) {
       if (!d.tarjeta_id || !d.tarjeta) continue
       
+      // Si aún no tenemos esta tarjeta o encontramos una suscripción más reciente
       if (!apadrinamientosMap.has(d.tarjeta_id)) {
         apadrinamientosMap.set(d.tarjeta_id, {
           id: d.id,
@@ -278,9 +279,6 @@ export async function getGuardianData(token?: string): Promise<GuardianData | nu
   }
 }
 
-import { enviarEmailEstadoSuscripcion } from '@/lib/email-donaciones'
-import { notificarErrorAdmin } from '@/lib/notifications'
-
 export async function gestionarSuscripcionGuardian(
   donacionId: string, 
   accion: 'pausar' | 'reanudar' | 'cancelar'
@@ -288,9 +286,10 @@ export async function gestionarSuscripcionGuardian(
   try {
     const adminSupabase = await createAdminSupabaseClient()
 
+    // 1. Obtener la donación
     const { data: donacion, error: dErr } = await adminSupabase
       .from('donaciones')
-      .select('*, tarjeta:tarjetas_donacion(nombre_especie, nombre_animal)')
+      .select('*')
       .eq('id', donacionId)
       .single()
 
@@ -300,6 +299,7 @@ export async function gestionarSuscripcionGuardian(
 
     const nuevoEstado = accion === 'pausar' ? 'pausada' : accion === 'reanudar' ? 'activa' : 'cancelada'
 
+    // 2. Si tiene subscription en Stripe, actualizarla si es necesario
     if (donacion.stripe_subscription_id) {
       try {
         const stripe = getStripe()
@@ -319,6 +319,7 @@ export async function gestionarSuscripcionGuardian(
       }
     }
 
+    // 3. Actualizar en base de datos
     const { error: updErr } = await adminSupabase
       .from('donaciones')
       .update({
@@ -327,27 +328,13 @@ export async function gestionarSuscripcionGuardian(
       .eq('id', donacionId)
 
     if (updErr) {
-      await notificarErrorAdmin(new Error(updErr.message), 'gestión de donación - actualización en BD')
       return { success: false, error: updErr.message }
-    }
-
-    // Enviar correo de confirmación al donante
-    if (donacion.donante_email) {
-      const tarjeta = donacion.tarjeta as { nombre_especie?: string; nombre_animal?: string } | null
-      await enviarEmailEstadoSuscripcion({
-        to: donacion.donante_email,
-        nombre: donacion.donante_nombre || 'Guardián',
-        nombreEspecie: tarjeta?.nombre_especie || 'tu especie apadrinada',
-        nombreAnimal: tarjeta?.nombre_animal || null,
-        accion,
-      })
     }
 
     revalidatePath('/guardian')
     return { success: true }
   } catch (err: any) {
     console.error('Error in gestionarSuscripcionGuardian:', err)
-    await notificarErrorAdmin(err, 'gestión de donación')
     return { success: false, error: err.message || 'Error al procesar la solicitud' }
   }
 }

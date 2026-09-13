@@ -6,9 +6,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { 
-  Heart, DollarSign, Calendar, Bird, Sparkles, 
-  ChevronRight, Pause, Play, XCircle, Compass, 
-  Ticket, BookOpen, ShieldCheck
+  Heart, DollarSign, Calendar, Bird, Sparkles, AlertCircle, 
+  ChevronRight, Pause, Play, XCircle, ExternalLink, MapPin, 
+  Ticket, BookOpen, Compass, ArrowUpRight, CheckCircle2, 
+  Clock, ShieldCheck, Loader2
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -197,7 +198,7 @@ export default function GuardianDashboardClient({ initialData }: Props) {
       {/* ── CONTENIDO PRINCIPAL ── */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
-        {/* ── 4 KPIS DE IMPACTO ── */}
+        {/* ── 4 KPIS DE IMPACTO (Siempre visibles o destacados) ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
           
           <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md relative overflow-hidden group hover:border-conservation-gold/40 transition-colors">
@@ -613,6 +614,10 @@ export default function GuardianDashboardClient({ initialData }: Props) {
   )
 }
 
+// ─────────────────────────────────────────────────────────────
+// COMPONENTES AUXILIARES
+// ─────────────────────────────────────────────────────────────
+
 function SponsorshipCard({ 
   item, 
   onAction,
@@ -645,7 +650,7 @@ function SponsorshipCard({
             </span>
           ) : (
             <span className="bg-conservation-gold/90 backdrop-blur-md text-forest-green-dark text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-              🕊️ Del Nido al Vuelo
+              🐾 Amigos
             </span>
           )}
         </div>
