@@ -5,6 +5,7 @@ import { X, Heart, User, Mail, AtSign, Calendar, DollarSign, CreditCard, Message
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { cambiarEstadoSuscripcionAdmin, type ApadrinamientoRow } from '@/app/(admin)/admin/apadrinamientos/actions'
+import { formatFechaHoraMx } from '@/lib/utils'
 
 interface PadrinoDetalleModalProps {
   isOpen: boolean
@@ -50,10 +51,7 @@ export default function PadrinoDetalleModal({
     }
   }
 
-  const fechaFormateada = new Date(apadrinamiento.created_at).toLocaleString('es-MX', {
-    dateStyle: 'long',
-    timeStyle: 'short',
-  })
+  const fechaFormateada = formatFechaHoraMx(apadrinamiento.created_at)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">

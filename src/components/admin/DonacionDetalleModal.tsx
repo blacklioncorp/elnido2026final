@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ExternalLink, Calendar, User, DollarSign, Target, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatFechaHoraMx } from '@/lib/utils'
 
 interface DonacionDetalleProps {
   isOpen: boolean
@@ -118,10 +118,7 @@ export default function DonacionDetalleModal({ isOpen, onClose, data }: Donacion
                     <span className="text-sm font-medium">Fecha y Hora</span>
                   </div>
                   <span className="font-medium text-forest-green-dark text-sm">
-                    {new Date(data.created_at).toLocaleString('es-MX', {
-                      dateStyle: 'short',
-                      timeStyle: 'short'
-                    })}
+                    {formatFechaHoraMx(data.created_at)}
                   </span>
                 </div>
 

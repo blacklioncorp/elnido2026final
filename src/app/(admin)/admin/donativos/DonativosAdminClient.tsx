@@ -18,6 +18,7 @@ import {
 import { createStripeProductForCard } from '@/app/actions/donaciones'
 import AdministrarActualizacionesModal from './AdministrarActualizacionesModal'
 import { compressImageClient } from '@/lib/client-image-compression'
+import { formatFechaMx } from '@/lib/utils'
 
 type TarjetaDonacionRow = Database['public']['Tables']['tarjetas_donacion']['Row']
 
@@ -634,7 +635,7 @@ export default function DonativosAdminClient({
                     <td className="p-4 font-semibold">{s.donante_username || s.donante_nombre}</td>
                     <td className="p-4">{s.tarjeta?.nombre_especie || 'Donativo General'}</td>
                     <td className="p-4 font-bold text-quetzal-blue">{formatCurrency(s.monto)}</td>
-                    <td className="p-4">{new Date(s.created_at).toLocaleDateString()}</td>
+                    <td className="p-4">{formatFechaMx(s.created_at)}</td>
                     <td className="p-4 text-center">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${s.estado_suscripcion === 'activa' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
                         {s.estado_suscripcion?.toUpperCase()}

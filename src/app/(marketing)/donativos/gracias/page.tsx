@@ -25,6 +25,9 @@ export default async function GraciasPage({ searchParams }: GraciasPageProps) {
   let seccion = ''
   let tarjetaId = ''
 
+  let donanteEmail = ''
+  let tokenFinal = session_id || ''
+
   if (session_id) {
     try {
       const stripe = getStripe()
@@ -33,16 +36,41 @@ export default async function GraciasPage({ searchParams }: GraciasPageProps) {
       if (session.payment_status === 'paid' && session.metadata?.producto === 'donacion') {
         sessionOk = true
         username = session.metadata?.donante_username ?? session.metadata?.donante_nombre ?? 'Guardián'
+        donanteEmail = session.metadata?.donante_email ?? session.customer_details?.email ?? ''
         const monto = Number(session.metadata?.monto ?? 0)
         esRecurrente = session.metadata?.es_recurrente === 'true'
         montoFmt = new Intl.NumberFormat('es-MX', {
           style: 'currency', currency: 'MXN', maximumFractionDigits: 0,
         }).format(monto)
 
+        const supabase = await createAdminSupabaseClient()
+
+        // Buscar token de acceso generado por el webhook
+        const { data: donacionDb } = await supabase
+          .from('donaciones')
+          .select('token_acceso')
+          .eq('stripe_session_id', session_id)
+          .maybeSingle()
+
+        if (donacionDb?.token_acceso) {
+          tokenFinal = donacionDb.token_acceso
+        } else if (donanteEmail) {
+          const { data: tokenDb } = await supabase
+            .from('tokens_guardian')
+            .select('token')
+            .eq('email', donanteEmail)
+            .order('creado_en', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          if (tokenDb?.token) {
+            tokenFinal = tokenDb.token
+          }
+        }
+
         // Fetch species name if tarjeta_id exists
         tarjetaId = session.metadata?.tarjeta_id || ''
         if (tarjetaId) {
-          const supabase = await createAdminSupabaseClient()
           const { data } = await supabase
             .from('tarjetas_donacion')
             .select('nombre_especie, nombre_animal, seccion')
@@ -97,7 +125,7 @@ export default async function GraciasPage({ searchParams }: GraciasPageProps) {
             {sessionOk && (
               <div className="mt-4 bg-white/10 rounded-xl px-4 py-2 inline-block">
                 <p className="text-conservation-gold text-sm font-bold">
-                  ✅ Ya apareces como Guardián en la barra de progreso
+                  ✅ Ya tienes acceso exclusivo como Guardián
                 </p>
               </div>
             )}
@@ -112,27 +140,36 @@ export default async function GraciasPage({ searchParams }: GraciasPageProps) {
             {/* Action buttons */}
             {seccion === 'impulsa_vuelo' && tarjetaId ? (
               <Link
-                href={`/impulsa-el-vuelo/${tarjetaId}?session_id=${session_id}`}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-off-white transition-all hover:brightness-110"
-                style={{ background: 'linear-gradient(135deg, #D4A843 0%, #B8860B 100%)' }} // gold gradient for special map
+                href={`/impulsa-el-vuelo/${tarjetaId}?token=${tokenFinal}`}
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-off-white transition-all hover:brightness-110 shadow-lg"
+                style={{ background: 'linear-gradient(135deg, #D4A843 0%, #B8860B 100%)' }}
               >
-                <Heart className="h-4 w-4" />
-                Seguir el viaje de la especie
+                <span>🗺️</span>
+                <span>Ver el progreso de {especieNombre || 'la especie'}</span>
               </Link>
             ) : (
               <Link
-                href="/donativos"
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-off-white transition-all hover:brightness-110"
+                href={`/guardian?token=${tokenFinal}`}
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-off-white transition-all hover:brightness-110 shadow-lg"
                 style={{ background: 'linear-gradient(135deg, #0B2B26 0%, #2E86AB 100%)' }}
               >
-                <Heart className="h-4 w-4" />
-                Ver mi donativo en la barra
+                <span>🦅</span>
+                <span>Ver mi Dashboard de Guardián</span>
               </Link>
             )}
 
+            {/* Botón secundario para crear cuenta / login */}
+            <Link
+              href={`/login?redirect=/guardian${donanteEmail ? `&email=${encodeURIComponent(donanteEmail)}` : ''}`}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-forest-green-dark bg-conservation-gold/20 hover:bg-conservation-gold/30 border border-conservation-gold/40 transition-colors text-sm"
+            >
+              <span>👤</span>
+              <span>Crear cuenta para ver mi Dashboard</span>
+            </Link>
+
             <Link
               href="/donativos"
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-forest-green-dark bg-forest-green-dark/5 hover:bg-forest-green-dark/10 transition-colors text-sm"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-medium text-forest-green-dark/70 hover:text-forest-green-dark hover:bg-forest-green-dark/5 transition-colors text-sm"
             >
               Apadrinar otra especie
               <ArrowRight className="h-4 w-4" />

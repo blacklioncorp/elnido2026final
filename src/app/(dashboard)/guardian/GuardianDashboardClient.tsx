@@ -9,15 +9,21 @@ import {
   Heart, DollarSign, Calendar, Bird, Sparkles, AlertCircle, 
   ChevronRight, Pause, Play, XCircle, ExternalLink, MapPin, 
   Ticket, BookOpen, Compass, ArrowUpRight, CheckCircle2, 
-  Clock, ShieldCheck, Loader2
+  Clock, ShieldCheck, Loader2, Star, CreditCard, Settings,
+  User, Lock, Phone, Mail, Camera, Filter, RotateCcw, Bell, ChevronLeft
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatFechaMx } from '@/lib/utils'
 import { 
   GuardianData, 
   ApadrinamientoItem, 
-  gestionarSuscripcionGuardian 
+  gestionarSuscripcionGuardian,
+  getHistorialGuardian,
+  actualizarPerfil,
+  HistorialItem,
 } from '@/app/actions/guardian'
+import { unirseListaEspera } from '@/app/actions/membresias'
+import { useEffect } from 'react'
 
 const GuardianMap = dynamic(() => import('@/components/guardian/GuardianMap'), {
   ssr: false,
@@ -32,14 +38,16 @@ interface Props {
   initialData: GuardianData | null
 }
 
-type TabType = 'resumen' | 'apadrinamientos' | 'impulsa' | 'noticias' | 'eventos'
+type TabType = 'resumen' | 'apadrinamientos' | 'impulsa' | 'beneficios' | 'noticias' | 'eventos' | 'historial' | 'perfil'
 
 const TABS: { id: TabType; label: string; icon: any }[] = [
   { id: 'resumen', label: 'Resumen', icon: Sparkles },
   { id: 'apadrinamientos', label: 'Mis Apadrinamientos', icon: Heart },
   { id: 'impulsa', label: 'Impulsa el Vuelo', icon: Bird },
-  { id: 'noticias', label: 'Noticias del Nido', icon: BookOpen },
+  { id: 'beneficios', label: 'Mis Beneficios', icon: Star },
+  { id: 'noticias', label: 'Noticias', icon: BookOpen },
   { id: 'eventos', label: 'Próximos Eventos', icon: Ticket },
+  { id: 'historial', label: 'Historial', icon: CreditCard },
 ]
 
 function formatMXN(amount: number): string {
@@ -128,12 +136,12 @@ export default function GuardianDashboardClient({ initialData }: Props) {
       {esAnonimoConToken && (
         <div className="bg-gradient-to-r from-quetzal-blue/90 to-forest-green-light border-b border-white/20 px-4 py-3 text-center text-xs sm:text-sm font-medium text-white shadow-md flex flex-wrap items-center justify-center gap-2">
           <Sparkles className="w-4 h-4 text-conservation-gold shrink-0" />
-          <span>Accediste con enlace mágico. <strong>Crea tu cuenta gratuita</strong> para guardar tu historial y recibir actualizaciones en tu panel.</span>
+          <span>Accediste con tu enlace de Guardián. <strong>Crea tu cuenta para acceso permanente</strong> y gestionar tus apadrinamientos en cualquier momento.</span>
           <Link 
-            href={`/login?email=${encodeURIComponent(usuario?.email || '')}`} 
-            className="underline font-bold hover:text-conservation-gold transition-colors ml-1"
+            href={`/login?redirect=/guardian${usuario?.email ? `&email=${encodeURIComponent(usuario.email)}` : ''}`} 
+            className="underline font-bold text-conservation-gold hover:text-yellow-300 transition-colors ml-1 inline-flex items-center gap-1"
           >
-            Vincular cuenta →
+            Crear cuenta →
           </Link>
         </div>
       )}
@@ -155,12 +163,20 @@ export default function GuardianDashboardClient({ initialData }: Props) {
             </div>
 
             <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setActiveTab('perfil')} 
+                className="bg-off-white/10 hover:bg-off-white/20 text-off-white px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 transition-all"
+              >
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">Mi Perfil</span>
+              </button>
               <Link 
                 href="/donativos" 
                 className="bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-bold px-4 py-2.5 rounded-xl transition-all shadow-md text-xs sm:text-sm inline-flex items-center gap-1.5"
               >
                 <Heart className="w-4 h-4 fill-forest-green-dark" />
-                Apadrinar otra especie
+                <span className="hidden sm:inline">Apadrinar otra especie</span>
+                <span className="sm:hidden">🦜</span>
               </Link>
             </div>
           </div>
@@ -270,7 +286,7 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                   </div>
                   <button 
                     onClick={() => setActiveTab('apadrinamientos')}
-                    className="text-xs sm:text-sm font-semibold text-conservation-gold hover:underline flex items-center gap-1"
+                    className="text-xs sm:text-sm font-semibold text-conservation-gold hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     Ver todos ({apadrinamientos.length}) <ChevronRight className="w-4 h-4" />
                   </button>
@@ -313,7 +329,7 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                     </div>
                     <button 
                       onClick={() => setActiveTab('impulsa')}
-                      className="text-xs sm:text-sm font-semibold text-conservation-gold hover:underline flex items-center gap-1"
+                      className="text-xs sm:text-sm font-semibold text-conservation-gold hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       Ver mapa completo <ChevronRight className="w-4 h-4" />
                     </button>
@@ -334,7 +350,7 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                     </h3>
                     <button 
                       onClick={() => setActiveTab('noticias')} 
-                      className="text-xs font-semibold text-conservation-gold hover:underline"
+                      className="text-xs font-semibold text-conservation-gold hover:underline cursor-pointer"
                     >
                       Ver todas →
                     </button>
@@ -354,7 +370,7 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                     </h3>
                     <button 
                       onClick={() => setActiveTab('eventos')} 
-                      className="text-xs font-semibold text-conservation-gold hover:underline"
+                      className="text-xs font-semibold text-conservation-gold hover:underline cursor-pointer"
                     >
                       Ver todos →
                     </button>
@@ -482,7 +498,7 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                                   <div key={act.id} className="bg-white/5 p-3 rounded-xl border border-white/5 space-y-1">
                                     <div className="flex justify-between items-center text-[11px] text-conservation-gold font-bold">
                                       <span>{act.titulo}</span>
-                                      <span className="text-off-white/40">{new Date(act.fecha || act.created_at).toLocaleDateString()}</span>
+                                      <span className="text-off-white/40">{formatFechaMx(act.fecha || act.created_at)}</span>
                                     </div>
                                     <p className="text-xs text-off-white/70 line-clamp-2">{act.descripcion}</p>
                                   </div>
@@ -506,7 +522,56 @@ export default function GuardianDashboardClient({ initialData }: Props) {
             </motion.div>
           )}
 
-          {/* ════ TAB 4: NOTICIAS ════ */}
+          {/* ════ TAB 4: MIS BENEFICIOS ⭐ ════ */}
+          {activeTab === 'beneficios' && (
+            <motion.div 
+              key="beneficios"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8 max-w-3xl mx-auto"
+            >
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-10 backdrop-blur-md relative overflow-hidden shadow-2xl">
+                <div className="absolute -right-16 -top-16 w-64 h-64 bg-conservation-gold/10 rounded-full blur-3xl pointer-events-none" />
+                
+                <div className="flex items-center gap-3.5 mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-conservation-gold/20 text-conservation-gold flex items-center justify-center text-2xl shadow-inner">
+                    ⭐
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-forest-green-light/40 text-conservation-gold text-[11px] font-bold uppercase tracking-wider mb-1 border border-conservation-gold/30">
+                      🚧 Próximamente
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-off-white">Mis Beneficios</h2>
+                  </div>
+                </div>
+
+                <p className="text-off-white/80 text-sm sm:text-base leading-relaxed mb-8">
+                  Muy pronto podrás adquirir tu membresía Guardián y disfrutar de:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                  {[
+                    'Saldo para consumo en tienda',
+                    'Descuentos en eventos y talleres',
+                    'Accesos incluidos al santuario',
+                    'Beneficios exclusivos',
+                  ].map((beneficio, i) => (
+                    <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-conservation-gold/40 transition-colors">
+                      <CheckCircle2 className="w-5 h-5 text-conservation-gold shrink-0" />
+                      <span className="text-sm font-semibold text-off-white">{beneficio}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pt-6 border-t border-white/10">
+                  <BeneficiosWaitlistSection initialEmail={usuario?.email || ''} />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ════ TAB 5: NOTICIAS ════ */}
           {activeTab === 'noticias' && (
             <motion.div 
               key="noticias"
@@ -534,7 +599,7 @@ export default function GuardianDashboardClient({ initialData }: Props) {
             </motion.div>
           )}
 
-          {/* ════ TAB 5: EVENTOS ════ */}
+          {/* ════ TAB 6: EVENTOS ════ */}
           {activeTab === 'eventos' && (
             <motion.div 
               key="eventos"
@@ -555,12 +620,55 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                   Pronto anunciaremos nuevos talleres y eventos especiales.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {eventos.map(ev => (
                     <EventCard key={ev.id} item={ev} />
                   ))}
                 </div>
               )}
+            </motion.div>
+          )}
+
+          {/* ════ TAB 7: HISTORIAL 💳 ════ */}
+          {activeTab === 'historial' && (
+            <motion.div 
+              key="historial"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-6"
+            >
+              <HistorialTab email={usuario?.email || ''} />
+            </motion.div>
+          )}
+
+          {/* ════ TAB 8: MI PERFIL ⚙️ ════ */}
+          {activeTab === 'perfil' && (
+            <motion.div 
+              key="perfil"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8 max-w-4xl mx-auto"
+            >
+              <PerfilTab 
+                usuario={usuario}
+                apadrinamientos={apadrinamientos}
+                onSubscriptionAction={handleSubscriptionAction}
+                onOpenCancelModal={(id) => setCancelModalId(id)}
+                onUpdateUser={(updated) => {
+                  setData(prev => {
+                    if (!prev || !prev.usuario) return prev
+                    return {
+                      ...prev,
+                      usuario: {
+                        ...prev.usuario,
+                        ...updated,
+                      }
+                    }
+                  })
+                }}
+              />
             </motion.div>
           )}
 
@@ -588,20 +696,20 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                   setCancelModalId(null)
                 }}
                 disabled={isPending}
-                className="w-full bg-amber-500 hover:bg-amber-600 text-forest-green-dark font-bold py-2.5 rounded-xl text-xs transition-colors"
+                className="w-full bg-amber-500 hover:bg-amber-600 text-forest-green-dark font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
               >
                 Pausar temporalmente
               </button>
               <button
                 onClick={() => handleSubscriptionAction(cancelModalId, 'cancelar')}
                 disabled={isPending}
-                className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 font-semibold py-2.5 rounded-xl text-xs border border-red-500/30 transition-colors"
+                className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 font-semibold py-2.5 rounded-xl text-xs border border-red-500/30 transition-colors cursor-pointer"
               >
                 {isPending ? 'Procesando...' : 'Sí, cancelar apadrinamiento'}
               </button>
               <button
                 onClick={() => setCancelModalId(null)}
-                className="w-full bg-white/5 hover:bg-white/10 text-off-white/70 py-2 rounded-xl text-xs transition-colors"
+                className="w-full bg-white/5 hover:bg-white/10 text-off-white/70 py-2 rounded-xl text-xs transition-colors cursor-pointer"
               >
                 Volver
               </button>
@@ -610,6 +718,645 @@ export default function GuardianDashboardClient({ initialData }: Props) {
         </div>
       )}
 
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────
+// COMPONENTES AUXILIARES PARA NUEVOS TABS
+// ─────────────────────────────────────────────────────────────
+
+function BeneficiosWaitlistSection({ initialEmail }: { initialEmail: string }) {
+  const [email, setEmail] = useState(initialEmail)
+  const [loading, setLoading] = useState(false)
+  const [registered, setRegistered] = useState(false)
+
+  const handleWaitlist = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email.trim() || !email.includes('@')) {
+      toast.error('Por favor ingresa un correo electrónico válido')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await unirseListaEspera(email.trim())
+      if (res.ya_registrado) {
+        toast.info('Ya estás en la lista de espera')
+        setRegistered(true)
+      } else if (res.success) {
+        toast.success('¡Listo! Te avisaremos cuando las membresías estén disponibles')
+        setRegistered(true)
+      } else {
+        toast.error(res.error || 'Ocurrió un error')
+      }
+    } catch {
+      toast.error('No se pudo completar el registro')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (registered) {
+    return (
+      <div className="bg-conservation-gold/10 border border-conservation-gold/30 rounded-2xl p-5 text-center">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-conservation-gold/20 text-conservation-gold mb-2">
+          <CheckCircle2 className="w-5 h-5" />
+        </div>
+        <p className="text-sm font-bold text-conservation-gold">¡Registro exitoso!</p>
+        <p className="text-xs text-off-white/70 mt-1">
+          Te avisaremos por correo en cuanto las Membresías Guardián estén disponibles.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleWaitlist} className="space-y-3">
+      <p className="text-xs text-off-white/60 font-medium">
+        ¿Quieres ser de los primeros en acceder? Únete a la lista de espera:
+      </p>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="tu-correo@ejemplo.com"
+          disabled={loading}
+          required
+          className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-off-white placeholder:text-off-white/40 focus:outline-none focus:ring-2 focus:ring-conservation-gold text-sm"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-bold px-6 py-3 rounded-xl transition-all text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Guardando...</span>
+            </>
+          ) : (
+            <>
+              <Bell className="w-4 h-4" />
+              <span>Avísame cuando estén disponibles</span>
+            </>
+          )}
+        </button>
+      </div>
+    </form>
+  )
+}
+
+function HistorialTab({ email }: { email: string }) {
+  const [items, setItems] = useState<HistorialItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [tipoFiltro, setTipoFiltro] = useState<string>('todos')
+  const [desde, setDesde] = useState<string>('')
+  const [hasta, setHasta] = useState<string>('')
+
+  const fetchHistorial = async (p: number = page) => {
+    setLoading(true)
+    try {
+      const res = await getHistorialGuardian(email, p, {
+        tipo: tipoFiltro,
+        desde: desde || undefined,
+        hasta: hasta || undefined,
+      })
+      setItems(res.items)
+      setTotal(res.total)
+      setTotalPages(res.totalPaginas)
+      setPage(res.paginaActual)
+    } catch (err) {
+      console.error('Error fetching historial:', err)
+      toast.error('Error al cargar historial')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (email) {
+      fetchHistorial(1)
+    }
+  }, [email, tipoFiltro, desde, hasta])
+
+  const limpiarFiltros = () => {
+    setTipoFiltro('todos')
+    setDesde('')
+    setHasta('')
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Encabezado y Filtros */}
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-off-white flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-conservation-gold" />
+              Historial de Transacciones
+            </h2>
+            <p className="text-xs sm:text-sm text-off-white/60">
+              Registro completo de tus donaciones, membresías y compras de boletos ({total} registro{total !== 1 ? 's' : ''})
+            </p>
+          </div>
+
+          {(tipoFiltro !== 'todos' || desde || hasta) && (
+            <button
+              onClick={limpiarFiltros}
+              className="text-xs text-conservation-gold hover:underline flex items-center gap-1 cursor-pointer self-start sm:self-auto"
+            >
+              <RotateCcw className="w-3.5 h-3.5" /> Limpiar filtros
+            </button>
+          )}
+        </div>
+
+        {/* Barra de Filtros */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10">
+          <div>
+            <label className="block text-[11px] font-semibold text-off-white/60 uppercase tracking-wider mb-1">
+              Tipo de transacción
+            </label>
+            <select
+              value={tipoFiltro}
+              onChange={(e) => setTipoFiltro(e.target.value)}
+              className="w-full bg-forest-green-dark border border-white/20 rounded-xl px-3 py-2 text-xs text-off-white focus:outline-none focus:ring-1 focus:ring-conservation-gold"
+            >
+              <option value="todos">Todos los tipos</option>
+              <option value="donaciones">🐾 Donaciones / Apadrinamientos</option>
+              <option value="membresias">⭐ Membresías</option>
+              <option value="boletos">🎟️ Boletos</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-off-white/60 uppercase tracking-wider mb-1">
+              Desde
+            </label>
+            <input
+              type="date"
+              value={desde}
+              onChange={(e) => setDesde(e.target.value)}
+              className="w-full bg-forest-green-dark border border-white/20 rounded-xl px-3 py-2 text-xs text-off-white focus:outline-none focus:ring-1 focus:ring-conservation-gold"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-off-white/60 uppercase tracking-wider mb-1">
+              Hasta
+            </label>
+            <input
+              type="date"
+              value={hasta}
+              onChange={(e) => setHasta(e.target.value)}
+              className="w-full bg-forest-green-dark border border-white/20 rounded-xl px-3 py-2 text-xs text-off-white focus:outline-none focus:ring-1 focus:ring-conservation-gold"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tabla de Resultados */}
+      {loading ? (
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-12 text-center text-off-white/60">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-conservation-gold mb-3" />
+          <p className="text-sm">Cargando transacciones...</p>
+        </div>
+      ) : items.length === 0 ? (
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-12 text-center max-w-md mx-auto space-y-4">
+          <div className="text-4xl">💳</div>
+          <h3 className="text-lg font-bold text-off-white">Aún no tienes transacciones</h3>
+          <p className="text-xs text-off-white/60">
+            {tipoFiltro !== 'todos' || desde || hasta
+              ? 'No se encontraron resultados con los filtros seleccionados.'
+              : 'Cuando realices un donativo o adquieras boletos, tus comprobantes aparecerán aquí.'}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
+            <Link
+              href="/donativos"
+              className="bg-conservation-gold text-forest-green-dark font-bold px-4 py-2 rounded-xl text-xs inline-block"
+            >
+              Explorar cómo apoyar →
+            </Link>
+            <Link
+              href="/boletos"
+              className="bg-white/10 hover:bg-white/20 text-off-white font-medium px-4 py-2 rounded-xl text-xs inline-block"
+            >
+              Comprar Boletos
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="bg-black/20 text-off-white/60 text-[11px] uppercase tracking-wider border-b border-white/10">
+                  <tr>
+                    <th className="py-3.5 px-4 font-semibold">Fecha</th>
+                    <th className="py-3.5 px-4 font-semibold">Tipo</th>
+                    <th className="py-3.5 px-4 font-semibold">Producto / Concepto</th>
+                    <th className="py-3.5 px-4 font-semibold">Monto</th>
+                    <th className="py-3.5 px-4 font-semibold">Estado</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5 text-off-white/80">
+                  {items.map((item) => {
+                    const esDonacion = item.tipo === 'donacion'
+                    const esMembresia = item.tipo === 'membresia'
+                    const estado = (item.estado || '').toLowerCase()
+
+                    return (
+                      <tr key={item.id} className="hover:bg-white/5 transition-colors">
+                        <td className="py-3.5 px-4 whitespace-nowrap font-medium text-off-white">
+                          {formatFechaMx(item.fecha)}
+                        </td>
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          {esDonacion && (
+                            <span className="bg-conservation-gold/20 text-conservation-gold border border-conservation-gold/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                              Donación
+                            </span>
+                          )}
+                          {esMembresia && (
+                            <span className="bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                              Membresía
+                            </span>
+                          )}
+                          {!esDonacion && !esMembresia && (
+                            <span className="bg-quetzal-blue/20 text-quetzal-blue border border-quetzal-blue/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                              Boleto
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 font-medium text-off-white">
+                          <div>{item.producto}</div>
+                          {item.referencia && (
+                            <span className="text-[10px] text-off-white/40 font-mono">
+                              Ref: {item.referencia.slice(0, 14)}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 font-bold text-conservation-gold whitespace-nowrap">
+                          {formatMXN(item.monto)}
+                        </td>
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <span
+                            className={cn(
+                              "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                              (estado === 'completado' || estado === 'activa' || estado === 'pagado') &&
+                                "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                              estado === 'pausada' &&
+                                "bg-amber-500/20 text-amber-300 border-amber-500/30",
+                              estado === 'cancelada' &&
+                                "bg-red-500/20 text-red-300 border-red-500/30",
+                              estado !== 'completado' && estado !== 'activa' && estado !== 'pagado' && estado !== 'pausada' && estado !== 'cancelada' &&
+                                "bg-white/10 text-off-white/70 border-white/10"
+                            )}
+                          >
+                            {estado === 'completado' || estado === 'pagado' ? 'Completado' : estado === 'activa' ? 'Activo' : estado === 'pausada' ? 'Pausado' : estado === 'cancelada' ? 'Cancelado' : estado || 'Completado'}
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-2 pt-2 text-xs">
+              <span className="text-off-white/50">
+                Página {page} de {totalPages}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => fetchHistorial(page - 1)}
+                  disabled={page <= 1}
+                  className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-off-white border border-white/10 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors flex items-center gap-1"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" /> Anterior
+                </button>
+                <button
+                  onClick={() => fetchHistorial(page + 1)}
+                  disabled={page >= totalPages}
+                  className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-off-white border border-white/10 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors flex items-center gap-1"
+                >
+                  Siguiente <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PerfilTab({
+  usuario,
+  apadrinamientos,
+  onSubscriptionAction,
+  onOpenCancelModal,
+  onUpdateUser,
+}: {
+  usuario: GuardianData['usuario']
+  apadrinamientos: ApadrinamientoItem[]
+  onSubscriptionAction: (id: string, accion: 'pausar' | 'reanudar' | 'cancelar') => void
+  onOpenCancelModal: (id: string) => void
+  onUpdateUser: (updated: Partial<NonNullable<GuardianData['usuario']>>) => void
+}) {
+  const [nombre, setNombre] = useState(usuario?.nombre || '')
+  const [fechaNacimiento, setFechaNacimiento] = useState(usuario?.fecha_nacimiento || '')
+  const [telefono, setTelefono] = useState(usuario?.telefono || '')
+  const [emailNotif, setEmailNotif] = useState(usuario?.preferencias_contacto?.email ?? true)
+  const [whatsappNotif, setWhatsappNotif] = useState(usuario?.preferencias_contacto?.whatsapp ?? false)
+  const [avatarUrl, setAvatarUrl] = useState(usuario?.avatar_url || '')
+  const [saving, setSaving] = useState(false)
+
+  const suscripcionesRecurrentes = apadrinamientos.filter((a) => a.es_recurrente)
+
+  const handleGuardarPerfil = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!usuario?.email) return
+
+    setSaving(true)
+    try {
+      const res = await actualizarPerfil({
+        email: usuario.email,
+        nombre: nombre.trim(),
+        fecha_nacimiento: fechaNacimiento || null,
+        telefono: telefono.trim() || null,
+        preferencias_contacto: {
+          email: emailNotif,
+          whatsapp: whatsappNotif,
+        },
+        avatar_url: avatarUrl || undefined,
+      })
+
+      if (res.success) {
+        toast.success('Perfil actualizado correctamente')
+        onUpdateUser({
+          nombre: nombre.trim(),
+          fecha_nacimiento: fechaNacimiento || null,
+          telefono: telefono.trim() || null,
+          preferencias_contacto: {
+            email: emailNotif,
+            whatsapp: whatsappNotif,
+          },
+          avatar_url: avatarUrl || null,
+        })
+      } else {
+        toast.error(res.error || 'Error al guardar cambios')
+      }
+    } catch {
+      toast.error('Ocurrió un error inesperado')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="space-y-10">
+      {/* ── SECCIÓN 6A & 6B: DATOS PERSONALES Y FOTO ── */}
+      <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md space-y-8 shadow-xl">
+        <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+          <div className="w-10 h-10 rounded-xl bg-conservation-gold/20 text-conservation-gold flex items-center justify-center">
+            <Settings className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-off-white">Mi Perfil de Guardián</h2>
+            <p className="text-xs sm:text-sm text-off-white/60">Gestiona tus datos de contacto y preferencias de notificación</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleGuardarPerfil} className="space-y-6">
+          {/* 6B: Foto de Perfil */}
+          <div className="flex flex-col sm:flex-row items-center gap-6 p-4 rounded-2xl bg-white/5 border border-white/5">
+            <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-conservation-gold bg-forest-green-dark flex items-center justify-center shrink-0 shadow-lg">
+              {avatarUrl ? (
+                <img 
+                  src={avatarUrl} 
+                  alt={nombre || 'Usuario'} 
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                <span className="text-2xl font-bold text-conservation-gold uppercase">
+                  {(nombre || usuario?.email || 'G')[0]}
+                </span>
+              )}
+            </div>
+            <div className="space-y-1 text-center sm:text-left flex-1">
+              <h3 className="font-bold text-off-white text-sm">Foto de perfil</h3>
+              <p className="text-xs text-off-white/50">
+                Personaliza tu imagen para tu credencial digital de Guardián.
+              </p>
+              <div className="pt-2">
+                <input
+                  type="text"
+                  value={avatarUrl}
+                  onChange={(e) => setAvatarUrl(e.target.value)}
+                  placeholder="URL de tu imagen de perfil (opcional)"
+                  className="w-full max-w-md bg-forest-green-dark border border-white/10 rounded-xl px-3 py-1.5 text-xs text-off-white placeholder:text-off-white/30 focus:outline-none focus:ring-1 focus:ring-conservation-gold"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 6A: Campos de Datos Personales */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-off-white/80 mb-1.5">
+                Nombre completo
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Tu nombre completo"
+                  required
+                  className="w-full bg-forest-green-dark border border-white/20 rounded-xl px-4 py-2.5 text-sm text-off-white placeholder:text-off-white/40 focus:outline-none focus:ring-2 focus:ring-conservation-gold"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-off-white/80 mb-1.5">
+                Correo electrónico
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={usuario?.email || ''}
+                  disabled
+                  className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-off-white/50 cursor-not-allowed pr-10"
+                />
+                <Lock className="w-4 h-4 text-off-white/30 absolute right-3 top-3" />
+              </div>
+              <p className="text-[10px] text-off-white/40 mt-1">El correo está vinculado a tu cuenta y no puede modificarse.</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-off-white/80 mb-1.5">
+                Fecha de nacimiento
+              </label>
+              <input
+                type="date"
+                value={fechaNacimiento}
+                onChange={(e) => setFechaNacimiento(e.target.value)}
+                className="w-full bg-forest-green-dark border border-white/20 rounded-xl px-4 py-2.5 text-sm text-off-white focus:outline-none focus:ring-2 focus:ring-conservation-gold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-off-white/80 mb-1.5">
+                Teléfono / WhatsApp
+              </label>
+              <input
+                type="tel"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+                placeholder="+52 55 1234 5678"
+                className="w-full bg-forest-green-dark border border-white/20 rounded-xl px-4 py-2.5 text-sm text-off-white placeholder:text-off-white/40 focus:outline-none focus:ring-2 focus:ring-conservation-gold"
+              />
+            </div>
+          </div>
+
+          {/* Preferencias de contacto */}
+          <div className="pt-4 border-t border-white/10 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-conservation-gold">
+              Preferencias de Notificación
+            </h4>
+            <div className="space-y-2.5">
+              <label className="flex items-center gap-3 cursor-pointer text-xs sm:text-sm text-off-white/80">
+                <input
+                  type="checkbox"
+                  checked={emailNotif}
+                  onChange={(e) => setEmailNotif(e.target.checked)}
+                  className="w-4 h-4 rounded border-white/20 bg-forest-green-dark text-conservation-gold focus:ring-conservation-gold"
+                />
+                <span>Recibir noticias, bitácoras y actualizaciones por correo electrónico</span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer text-xs sm:text-sm text-off-white/80">
+                <input
+                  type="checkbox"
+                  checked={whatsappNotif}
+                  onChange={(e) => setWhatsappNotif(e.target.checked)}
+                  className="w-4 h-4 rounded border-white/20 bg-forest-green-dark text-conservation-gold focus:ring-conservation-gold"
+                />
+                <span>Recibir alertas urgentes de conservación e invitaciones por WhatsApp</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="pt-2 flex justify-end">
+            <button
+              type="submit"
+              disabled={saving}
+              className="bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-bold px-6 py-2.5 rounded-xl transition-all shadow-md text-xs sm:text-sm inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Guardando cambios...</span>
+                </>
+              ) : (
+                <span>Guardar cambios</span>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* ── SECCIÓN 6C: SUSCRIPCIONES ACTIVAS ── */}
+      <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-md space-y-6 shadow-xl">
+        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-off-white flex items-center gap-2">
+              <Heart className="w-5 h-5 text-conservation-gold" />
+              Suscripciones y Apadrinamientos Recurrentes
+            </h2>
+            <p className="text-xs sm:text-sm text-off-white/60">Controla tus aportaciones mensuales automáticas</p>
+          </div>
+        </div>
+
+        {suscripcionesRecurrentes.length === 0 ? (
+          <div className="p-8 text-center bg-white/5 rounded-2xl border border-white/5 space-y-3">
+            <p className="text-sm text-off-white/70">No tienes donaciones recurrentes activas en este momento.</p>
+            <Link
+              href="/donativos"
+              className="bg-conservation-gold text-forest-green-dark font-bold px-5 py-2 rounded-xl text-xs inline-block"
+            >
+              Explorar Especies y Apadrinar
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {suscripcionesRecurrentes.map((sub) => {
+              const { tarjeta, monto, estado_suscripcion } = sub
+              return (
+                <div key={sub.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex gap-4 items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {tarjeta.imagen_url ? (
+                      <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-white/10">
+                        <Image src={tarjeta.imagen_url} alt={tarjeta.nombre_especie} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center text-xl shrink-0">
+                        🪶
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-off-white text-sm line-clamp-1">{tarjeta.nombre_especie}</h4>
+                      <p className="text-xs text-conservation-gold font-semibold">{formatMXN(monto)}/mes</p>
+                      <span className={cn(
+                        "inline-block mt-1 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider",
+                        estado_suscripcion === 'activa' && "bg-emerald-500/20 text-emerald-300",
+                        estado_suscripcion === 'pausada' && "bg-amber-500/20 text-amber-300",
+                        estado_suscripcion === 'cancelada' && "bg-red-500/20 text-red-300"
+                      )}>
+                        {estado_suscripcion === 'activa' ? 'Activa' : estado_suscripcion === 'pausada' ? 'Pausada' : 'Cancelada'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 shrink-0">
+                    {estado_suscripcion === 'activa' && (
+                      <button
+                        onClick={() => onSubscriptionAction(sub.id, 'pausar')}
+                        className="px-3 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        Pausar
+                      </button>
+                    )}
+                    {estado_suscripcion === 'pausada' && (
+                      <button
+                        onClick={() => onSubscriptionAction(sub.id, 'reanudar')}
+                        className="px-3 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        Reanudar
+                      </button>
+                    )}
+                    {estado_suscripcion !== 'cancelada' && (
+                      <button
+                        onClick={() => onOpenCancelModal(sub.id)}
+                        className="px-3 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -769,7 +1516,7 @@ function NewsCard({ item }: { item: any }) {
               {item.tipo === 'bitacora' ? '🦅 Bitácora' : '📰 Blog'}
             </span>
             <span className="text-[10px] text-off-white/40">
-              {new Date(item.fecha).toLocaleDateString()}
+              {formatFechaMx(item.fecha)}
             </span>
           </div>
           <h4 className="font-bold text-off-white text-sm line-clamp-1 group-hover:text-conservation-gold transition-colors">

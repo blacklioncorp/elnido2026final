@@ -51,6 +51,7 @@ export default function Footer() {
             <h4 className="font-semibold text-sm text-off-white uppercase tracking-widest mb-4">Apoyar</h4>
             <ul className="space-y-2.5">
               {[
+                { href: '/guardian-info', label: 'Programa Guardián' },
                 { href: '/donar', label: 'Hacer una Donación' },
                 { href: '/apadrinar', label: 'Programa de Apadrinamiento' },
                 { href: '/contacto', label: 'Contacto' },

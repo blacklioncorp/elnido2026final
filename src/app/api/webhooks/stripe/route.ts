@@ -63,6 +63,19 @@ export async function POST(request: Request) {
         return NextResponse.json({ received: true })
       }
 
+      // Generar token único para el Guardián (+1 año de vigencia)
+      const tokenGuardian = crypto.randomUUID()
+
+      if (donanteEmail) {
+        await admin.from('tokens_guardian').insert({
+          token: tokenGuardian,
+          email: donanteEmail,
+          nombre: donanteNombre,
+          tarjeta_id: tarjetaId ?? null,
+          expira_en: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+        })
+      }
+
       // Insertar donación en tabla unificada
       await admin.from('donaciones').insert({
         tarjeta_id: tarjetaId ?? null,
@@ -76,6 +89,7 @@ export async function POST(request: Request) {
         es_recurrente: esRecurrente,
         stripe_subscription_id: esRecurrente ? subscriptionId : null,
         estado_suscripcion: esRecurrente ? 'activa' : null,
+        token_acceso: tokenGuardian,
       })
 
       // 2. Si es una donación por especie, actualizar monto_recaudado
@@ -83,7 +97,7 @@ export async function POST(request: Request) {
         // Fetch current state
         const { data: tarjeta } = await admin
           .from('tarjetas_donacion')
-          .select('monto_recaudado, meta_monto, meta_cumplida, nombre_especie, nombre_animal')
+          .select('monto_recaudado, meta_monto, meta_cumplida, nombre_especie, nombre_animal, seccion')
           .eq('id', tarjetaId)
           .maybeSingle()
 
@@ -127,6 +141,10 @@ export async function POST(request: Request) {
               nombreEspecie: tarjeta.nombre_especie,
               nombreAnimal: tarjeta.nombre_animal,
               monto,
+              tarjetaId,
+              token: tokenGuardian,
+              seccion: tarjeta.seccion,
+              esRecurrente,
             })
           }
         }
@@ -138,6 +156,7 @@ export async function POST(request: Request) {
           to: donanteEmail,
           nombre: donanteNombre,
           monto,
+          token: tokenGuardian,
         })
       }
 

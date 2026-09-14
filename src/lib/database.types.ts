@@ -38,6 +38,9 @@ export type Database = {
           admin_role: AdminRole | null
           email: string | null
           activo: boolean
+          fecha_nacimiento: string | null
+          telefono: string | null
+          preferencias_contacto: { email: boolean; whatsapp: boolean } | null
         }
         Insert: {
           id: string
@@ -48,6 +51,9 @@ export type Database = {
           admin_role?: AdminRole | null
           email?: string | null
           activo?: boolean
+          fecha_nacimiento?: string | null
+          telefono?: string | null
+          preferencias_contacto?: { email: boolean; whatsapp: boolean } | null
         }
         Update: {
           role?: UserRole
@@ -56,6 +62,9 @@ export type Database = {
           admin_role?: AdminRole | null
           email?: string | null
           activo?: boolean
+          fecha_nacimiento?: string | null
+          telefono?: string | null
+          preferencias_contacto?: { email: boolean; whatsapp: boolean } | null
         }
         Relationships: []
       }
@@ -916,6 +925,8 @@ export type Database = {
           mensaje: string | null
           origen: OrigenDonacion
           es_recurrente?: boolean | null
+          token_acceso?: string | null
+          user_id?: string | null
           created_at: string
         }
         Insert: {
@@ -931,6 +942,8 @@ export type Database = {
           mensaje?: string | null
           origen?: OrigenDonacion
           es_recurrente?: boolean | null
+          token_acceso?: string | null
+          user_id?: string | null
           created_at?: string
         }
         Update: {
@@ -945,10 +958,49 @@ export type Database = {
           mensaje?: string | null
           origen?: OrigenDonacion
           es_recurrente?: boolean | null
+          token_acceso?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "donaciones_tarjeta_id_fkey"
+            columns: ["tarjeta_id"]
+            referencedRelation: "tarjetas_donacion"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      tokens_guardian: {
+        Row: {
+          id: string
+          token: string
+          email: string
+          nombre: string | null
+          tarjeta_id: string | null
+          expira_en: string
+          creado_en: string
+        }
+        Insert: {
+          id?: string
+          token: string
+          email: string
+          nombre?: string | null
+          tarjeta_id?: string | null
+          expira_en?: string
+          creado_en?: string
+        }
+        Update: {
+          id?: string
+          token?: string
+          email?: string
+          nombre?: string | null
+          tarjeta_id?: string | null
+          expira_en?: string
+          creado_en?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tokens_guardian_tarjeta_id_fkey"
             columns: ["tarjeta_id"]
             referencedRelation: "tarjetas_donacion"
             referencedColumns: ["id"]
@@ -1046,6 +1098,24 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
+      }
+      lista_espera_membresias: {
+        Row: {
+          id: string
+          email: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          created_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

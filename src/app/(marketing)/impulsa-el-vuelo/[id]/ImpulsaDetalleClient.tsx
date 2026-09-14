@@ -5,7 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
 import { createClient } from '@/lib/supabase'
-import { verificarPadrino, verificarPadrinoPorSession } from '@/app/actions/liberacion'
+import { verificarPadrino, verificarPadrinoPorSession, verificarPadrinoPorToken } from '@/app/actions/liberacion'
+import { formatFechaLargaMx } from '@/lib/utils'
 import MapaInteractivo from '@/components/donativos/MapaInteractivo'
 import MapaEstaticoConBlur from '@/components/donativos/MapaEstaticoConBlur'
 import type { Database } from '@/lib/database.types'
@@ -72,19 +73,31 @@ export default function ImpulsaDetalleClient({ tarjeta, actualizaciones }: Props
           return
         }
 
-        // 2. Check if there's a session_id in the URL (they just came from checkout)
+        // 2. Check if there's a token or session_id in the URL
         const params = new URLSearchParams(window.location.search)
+        const token = params.get('token')
         const sessionId = params.get('session_id')
+
+        if (token) {
+          const isTokenValid = await verificarPadrinoPorToken(token, tarjeta.id)
+          if (isTokenValid) {
+            if (!unlockedCards.includes(tarjeta.id)) {
+              unlockedCards.push(tarjeta.id)
+              localStorage.setItem('unlocked_cards', JSON.stringify(unlockedCards))
+            }
+            setIsPadrino(true)
+            setLoading(false)
+            return
+          }
+        }
+
         if (sessionId) {
           const isSessionValid = await verificarPadrinoPorSession(sessionId, tarjeta.id)
           if (isSessionValid) {
-            // Save it to localStorage so they don't need the URL next time
-            unlockedCards.push(tarjeta.id)
-            localStorage.setItem('unlocked_cards', JSON.stringify(unlockedCards))
-            
-            // Clean up the URL to prevent sharing the link with the session token
-            window.history.replaceState({}, document.title, window.location.pathname)
-            
+            if (!unlockedCards.includes(tarjeta.id)) {
+              unlockedCards.push(tarjeta.id)
+              localStorage.setItem('unlocked_cards', JSON.stringify(unlockedCards))
+            }
             setIsPadrino(true)
             setLoading(false)
             return
@@ -224,8 +237,7 @@ export default function ImpulsaDetalleClient({ tarjeta, actualizaciones }: Props
                 <div className="space-y-12 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-forest-green-dark/20 before:to-transparent">
                   {actualizaciones.map((act, index) => {
                     const isEven = index % 2 === 0
-                    const dateObj = new Date(act.fecha + 'T12:00:00Z') // Fix timezones
-                    const formattedDate = dateObj.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })
+                    const formattedDate = formatFechaLargaMx(act.fecha)
                     
                     return (
                       <div key={act.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">

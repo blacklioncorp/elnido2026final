@@ -8,6 +8,7 @@ import type { Database } from '@/lib/database.types'
 import FormularioDonacion from './FormularioDonacion'
 import MapaCondicional from './MapaCondicional'
 import Link from 'next/link'
+import { formatFechaCorta } from '@/lib/utils'
 
 type TarjetaDonacion = Database['public']['Tables']['tarjetas_donacion']['Row']
 
@@ -262,9 +263,7 @@ export default function TarjetaDonacionCard({ tarjeta, donantesRecientes }: Tarj
                 {donantesRecientes.slice(0, 3).map((d, i) => {
                   const name = d.donante_username ?? d.donante_nombre
                   const avatarColor = getAvatarColor(name)
-                  const fecha = new Date(d.created_at).toLocaleDateString('es-MX', {
-                    day: 'numeric', month: 'short', year: 'numeric'
-                  })
+                  const fecha = formatFechaCorta(d.created_at)
                   return (
                     <div key={i} className="flex items-center gap-2 group/donor relative">
                       <div

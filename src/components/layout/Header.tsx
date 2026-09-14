@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Ticket, LogOut } from 'lucide-react';
+import { Ticket, LogOut, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 
@@ -78,6 +78,13 @@ export default function Header() {
           >
             <Ticket className="h-4 w-4" />
             Boletos
+          </Link>
+          <Link 
+            href="/guardian-info" 
+            className="bg-conservation-gold text-forest-green-dark px-4 py-2 rounded-full font-semibold hover:bg-conservation-gold/90 transition-all flex items-center gap-2 text-sm hover:scale-105"
+          >
+            <Star className="h-4 w-4" />
+            Conviértete en Guardián
           </Link>
           {user ? (
             <div className="hidden md:flex items-center gap-3 ml-2">

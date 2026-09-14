@@ -20,7 +20,7 @@ import {
 import Image from 'next/image'
 import MetricCard from '@/components/admin/MetricCard'
 import PadrinoDetalleModal from './PadrinoDetalleModal'
-import { cn } from '@/lib/utils'
+import { cn, formatFechaCorta } from '@/lib/utils'
 import type { ApadrinamientoRow, ApadrinamientosKPIs, EspecieOpcion } from '@/app/(admin)/admin/apadrinamientos/actions'
 
 const PAGE_SIZE = 15
@@ -245,11 +245,7 @@ export default function ApadrinamientosAdminClient({ initialData }: Apadrinamien
                   >
                     {/* Fecha */}
                     <td className="p-4 whitespace-nowrap text-off-white/70 text-xs font-mono">
-                      {new Date(item.created_at).toLocaleDateString('es-MX', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {formatFechaCorta(item.created_at)}
                     </td>
 
                     {/* Padrino */}

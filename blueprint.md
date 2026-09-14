@@ -45,7 +45,18 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
 *   **Migración de Assets Estáticos a `/public`:** Se migraron todos los assets de diseño, UI, fotos fijas del fundador (`/fundador/`), fotos del carrusel hero (`/hero/`), logos, plumas e iconos (`/images/`), audio ambiental (`/audio/audio_comprimido.mp3`) y videos (`/video/video1_comprimido.webm` y `/video/video2_comprimido.webm`) a rutas locales optimizadas servidas vía CDN local para reducir a cero el consumo de Egress en Supabase Storage.
 *   **Programa "Del Nido al Vuelo":** Se actualizó el nombre del programa (anteriormente "Apadrina a un Amigo") a "Del Nido al Vuelo", con mensaje emotivo enfocado en la rehabilitación y reinserción de las especies en su hábitat natural.
 *   **Video Testimonial y Audio Ambiental:** Actualizado el video a `Del_nido_al_vuelo.MP4` con subtítulo emotivo configurable y el reproductor de "Sonidos del Santuario" a `mezcla_aves_natural_40s.mp3` tanto en código como en la base de datos Supabase.
-*   **Dashboard de Padrinos (`/guardian`):** Implementado el panel de control completo con KPIs de impacto (especies apadrinadas, aportado total, semanas activo, vidas impactadas), mapa satelital multi-especie Mapbox, gestión de suscripciones (pausar, reanudar, cancelar), feed de bitácoras y noticias, y preventa de eventos.
+*   **Dashboard de Padrinos (`/guardian`):** Implementado el panel de control integral con 8 pestañas temáticas (`Resumen`, `Mis Apadrinamientos`, `Impulsa el Vuelo`, `Mis Beneficios`, `Noticias`, `Próximos Eventos`, `Historial`, `Mi Perfil`):
+    *   *Header Personalizado & Botón de Perfil:* Muestra el nombre real (`profiles.full_name` o fallback de correo) y acceso directo con botón "⚙️ Mi Perfil" en la cabecera.
+    *   *Tab Mis Beneficios (⭐):* Vista previa de beneficios de membresías Guardián con formulario reactivo de lista de espera conectado a `unirseListaEspera`.
+    *   *Tab Historial (💳):* Tabla paginada (15 registros por página) que consolida donaciones, membresías y compras de boletos, con filtros reactivos por tipo y rango de fechas.
+    *   *Tab Mi Perfil (⚙️):* Formulario de datos personales (nombre, correo vinculado de solo lectura, fecha de nacimiento, teléfono y preferencias de notificación por correo/WhatsApp), foto de perfil y monitor de suscripciones recurrentes activas con controles para pausar, reanudar o cancelar.
+    *   *Flujo Post-Donación con Tokens (`tokens_guardian` & `token_acceso`):*
+        *   Generación automática de token con `crypto.randomUUID()` (+1 año de vigencia) en el webhook de Stripe (`checkout.session.completed`).
+        *   Página de agradecimiento (`/donativos/gracias`) con botón directo para desbloquear el mapa satelital (`/impulsa-el-vuelo/[id]?token=...`) y botón para crear cuenta / vincular dashboard.
+        *   Emails transaccionales de confirmación con enlace directo con token al progreso de la especie y botón para crear cuenta.
+        *   Desbloqueo automático del mapa en `/impulsa-el-vuelo/[id]` mediante validación de token y persistencia en `localStorage`.
+        *   Autenticación de invitados por token en `/guardian?token=...` con banner para acceso permanente y creación de cuenta.
+        *   Vinculación automática de donaciones previas a la cuenta del usuario en `auth/callback` al registrarse o iniciar sesión con Google.
 *   Implementado CRUD completo de **Paquetes Educativos** en `/admin/grupos` con Server Actions (`createPaquete`, `updatePaquete`, `deletePaquete`, `togglePaqueteActivo`, `uploadPaqueteImagen`).
 *   Añadido panel lateral (Drawer) interactivo con gestión de información pedagógica, actividades e itinerarios dinámicos y subida de imágenes optimizadas hasta 10MB.
 *   Añadido modal de detalle para cotizaciones recibidas con enlace directo para responder por correo o contactar por WhatsApp.
@@ -93,3 +104,14 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
 *   **Optimizador y Pre-Compresión de Imágenes en Cliente (`/src/lib/client-image-compression.ts`):**
     *   Módulo de compresión y reescalado de imágenes del lado del navegador (HTML5 Canvas + WebP) previo al envío de formularios administrativos (`FaunaAdminClient`, `BlogAdminClient`, `BitacoraAdminClient`, `GruposAdminClient` y `DonativosAdminClient`).
     *   Elimina por completo el error `HTTP 413 (Payload Too Large)` en Vercel (que impone un límite de 4.5 MB en Serverless Functions) al reducir fotos pesadas de cámaras de celular (5 MB a 15 MB) a archivos ligeros de ~150 KB en menos de 100ms sin pérdida perceptible de calidad visual.
+*   **Botón y Página Informativa "Programa Guardián" (`/guardian-info`):**
+    *   *Botón en Header (`Header.tsx`):* Botón destacado con estilo dorado (`bg-conservation-gold`) e icono `Star` ("Conviértete en Guardián") ubicado inmediatamente después del botón de Boletos para visibilidad prioritaria en navegación pública.
+    *   *Menú Móvil (`MobileMenu.tsx`):* Elemento "Conviértete en Guardián" con icono `Star` integrado en el menú flotante FAB móvil.
+    *   *Página Informativa (`/guardian-info`):*
+        *   *Sección 1 (Hero):* Fondo degradado `forest-green-dark` a `quetzal-blue` con ambient glow, título "Tu apoyo protege una vida.", descripción emotiva y botón CTA `[Conviértete en Guardián →]` enlazado a `/donativos`.
+        *   *Sección 2 (Beneficios - Próximamente):* Fondo `bg-off-white`, badge "🚧 Próximamente", lista con iconos `CheckCircle` (seguimiento personalizado, mapa de liberación, bitácora exclusiva, descuentos en eventos y saldo en tienda) y formulario de lista de espera.
+        *   *Formulario de Lista de Espera (`ListaEsperaForm.tsx` & `unirseListaEspera`):* Captura de email con validación, inserción en la tabla `lista_espera_membresias` mediante Server Action, manejo de emails ya registrados y feedback con notificaciones toast de Sonner ("¡Listo! Te avisaremos cuando estén disponibles").
+        *   *Sección 3 (Apadrinar mientras tanto):* Fondo `bg-quetzal-blue/10` con invitación a apadrinar desde $50/mes y botón a `/donativos`.
+        *   *Sección 4 (¿Ya eres Guardián?):* Fondo `forest-green-dark` con accesos rápidos para Iniciar Sesión (`/login`) y Ver mi Dashboard (`/guardian`).
+    *   *Enlace en Footer (`Footer.tsx`):* Enlace a "Programa Guardián" añadido dentro de la sección "Apoyar".
+

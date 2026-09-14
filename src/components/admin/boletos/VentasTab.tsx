@@ -17,7 +17,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatFechaCorta, formatFechaHoraMx } from '@/lib/utils';
 import { getVentasBoletos } from '@/app/(admin)/admin/boletos/actions';
 
 const PAGE_SIZE = 15;
@@ -260,11 +260,7 @@ export default function VentasTab({ initialSearch = '' }: { initialSearch?: stri
                         #{v.id.slice(0, 8)}
                       </span>
                       <span className="text-xs text-off-white/40">
-                        {new Date(v.created_at).toLocaleDateString('es-MX', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
+                        {formatFechaCorta(v.created_at)}
                       </span>
                     </td>
 
@@ -416,7 +412,7 @@ export default function VentasTab({ initialSearch = '' }: { initialSearch?: stri
                   Orden #{selectedVenta.id.slice(0, 13)}
                 </h3>
                 <p className="text-xs text-off-white/50">
-                  Emitida el {new Date(selectedVenta.created_at).toLocaleString('es-MX')}
+                  Emitida el {formatFechaHoraMx(selectedVenta.created_at)}
                 </p>
               </div>
               <button

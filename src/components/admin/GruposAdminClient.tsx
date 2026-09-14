@@ -10,7 +10,7 @@ import {
   Clock, DollarSign, Users, BookOpen, GraduationCap, CheckCircle2, 
   Calendar, Phone, Mail, Building, FileText, ChevronRight
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, formatFechaCorta } from '@/lib/utils'
 import Image from 'next/image'
 import { 
   createPaquete, 
@@ -567,7 +567,7 @@ export default function GruposAdminClient({ initialPaquetes, initialCotizaciones
                 {filtradas.map(c => (
                   <tr key={c.id} className="hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-off-white/80">
-                      {new Date(c.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      {formatFechaCorta(c.created_at)}
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-semibold text-off-white">{c.nombre_institucion || 'Sin institución'}</p>

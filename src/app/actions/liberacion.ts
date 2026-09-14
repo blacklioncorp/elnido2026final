@@ -125,3 +125,33 @@ export async function verificarPadrinoPorSession(sessionId: string, tarjetaId: s
   
   return data && data.length > 0
 }
+
+export async function verificarPadrinoPorToken(token: string, tarjetaId: string) {
+  if (!token || !token.trim()) return false
+  const cleanToken = token.trim()
+  const supabase = await createAdminSupabaseClient()
+
+  // 1. Buscar en tokens_guardian vigente
+  const { data: tokenDb } = await supabase
+    .from('tokens_guardian')
+    .select('id, tarjeta_id')
+    .eq('token', cleanToken)
+    .gte('expira_en', new Date().toISOString())
+    .maybeSingle()
+
+  if (tokenDb) {
+    if (!tokenDb.tarjeta_id || tokenDb.tarjeta_id === tarjetaId) {
+      return true
+    }
+  }
+
+  // 2. Buscar en donaciones por token_acceso o stripe_session_id
+  const { data: donacionDb } = await supabase
+    .from('donaciones')
+    .select('id')
+    .eq('tarjeta_id', tarjetaId)
+    .or(`token_acceso.eq.${cleanToken},stripe_session_id.eq.${cleanToken}`)
+    .limit(1)
+
+  return Boolean(donacionDb && donacionDb.length > 0)
+}

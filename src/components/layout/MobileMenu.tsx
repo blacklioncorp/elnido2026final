@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { Menu, X, PawPrint, GraduationCap, Heart, Gift, Users } from 'lucide-react'
+import { Menu, X, PawPrint, GraduationCap, Heart, Gift, Users, Star } from 'lucide-react'
 
 const MENU_ITEMS = [
+  { href: '/guardian-info', label: 'Conviértete en Guardián', icon: Star },
   { href: '/quienes-somos', label: 'Quiénes Somos', icon: Users },
   { href: '/fauna', label: 'Fauna', icon: PawPrint },
   { href: '/grupos', label: 'Grupos', icon: GraduationCap },

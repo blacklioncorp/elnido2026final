@@ -44,9 +44,14 @@ export interface GuardianData {
   autenticado: boolean
   esAnonimoConToken: boolean
   usuario: {
+    id?: string
     nombre: string
     email: string
     username?: string | null
+    avatar_url?: string | null
+    fecha_nacimiento?: string | null
+    telefono?: string | null
+    preferencias_contacto?: { email: boolean; whatsapp: boolean } | null
   } | null
   kpis: {
     especiesApadrinadas: number
@@ -63,6 +68,23 @@ export interface GuardianData {
   eventos: EventoItem[]
 }
 
+export interface HistorialItem {
+  id: string
+  fecha: string
+  tipo: 'donacion' | 'membresia' | 'boleto'
+  producto: string
+  monto: number
+  estado: string
+  referencia?: string | null
+}
+
+export interface HistorialResponse {
+  items: HistorialItem[]
+  total: number
+  paginaActual: number
+  totalPaginas: number
+}
+
 export async function getGuardianData(token?: string): Promise<GuardianData | null> {
   try {
     const adminSupabase = await createAdminSupabaseClient()
@@ -72,30 +94,77 @@ export async function getGuardianData(token?: string): Promise<GuardianData | nu
     let email: string | null = null
     let nombreUsuario: string = 'Guardián del Nido'
     let username: string | null = null
+    let userId: string | undefined = undefined
+    let avatarUrl: string | null = null
+    let fechaNacimiento: string | null = null
+    let telefono: string | null = null
+    let preferenciasContacto: { email: boolean; whatsapp: boolean } | null = { email: true, whatsapp: false }
     let esAnonimoConToken = false
 
     const { data: { user } } = await serverSupabase.auth.getUser()
 
     if (user && user.email) {
-      email = user.email
-      nombreUsuario = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0]
-      username = user.user_metadata?.username || null
-    } else if (token && token.trim()) {
-      const cleanToken = token.trim()
-      
-      // Buscar donación asociada al token (por stripe_session_id o donante_email)
-      const { data: donacionToken } = await adminSupabase
-        .from('donaciones')
-        .select('donante_email, donante_nombre, donante_username')
-        .or(`stripe_session_id.eq.${cleanToken},donante_email.eq.${cleanToken}`)
-        .limit(1)
+      email = user.email.toLowerCase()
+      userId = user.id
+
+      // Obtener datos del perfil de usuario
+      const { data: profile } = await adminSupabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
         .maybeSingle()
 
-      if (donacionToken && donacionToken.donante_email) {
-        email = donacionToken.donante_email
-        nombreUsuario = donacionToken.donante_nombre || 'Guardián del Nido'
-        username = donacionToken.donante_username || null
+      nombreUsuario = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0]
+      username = user.user_metadata?.username || null
+      avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || null
+      fechaNacimiento = profile?.fecha_nacimiento || null
+      telefono = profile?.telefono || null
+      preferenciasContacto = profile?.preferencias_contacto || { email: true, whatsapp: false }
+    } else if (token && token.trim()) {
+      const cleanToken = token.trim()
+
+      // 1. Buscar en la tabla tokens_guardian (con validación de vigencia)
+      const { data: tokenDb } = await adminSupabase
+        .from('tokens_guardian')
+        .select('email, nombre, tarjeta_id, expira_en')
+        .eq('token', cleanToken)
+        .gte('expira_en', new Date().toISOString())
+        .maybeSingle()
+
+      if (tokenDb?.email) {
+        email = tokenDb.email.toLowerCase()
+        nombreUsuario = tokenDb.nombre || tokenDb.email.split('@')[0] || 'Guardián del Nido'
         esAnonimoConToken = true
+
+        // Intentar obtener perfil por email
+        const { data: profile } = await adminSupabase
+          .from('profiles')
+          .select('*')
+          .eq('email', email)
+          .maybeSingle()
+
+        if (profile) {
+          if (profile.full_name) nombreUsuario = profile.full_name
+          avatarUrl = profile.avatar_url
+          fechaNacimiento = profile.fecha_nacimiento
+          telefono = profile.telefono
+          preferenciasContacto = profile.preferencias_contacto
+        }
+      } else {
+        // 2. Fallback: buscar en donaciones por token_acceso, stripe_session_id o donante_email
+        const { data: donacionToken } = await adminSupabase
+          .from('donaciones')
+          .select('donante_email, donante_nombre, donante_username')
+          .or(`token_acceso.eq.${cleanToken},stripe_session_id.eq.${cleanToken},donante_email.eq.${cleanToken}`)
+          .limit(1)
+          .maybeSingle()
+
+        if (donacionToken?.donante_email) {
+          email = donacionToken.donante_email.toLowerCase()
+          nombreUsuario = donacionToken.donante_nombre || donacionToken.donante_email.split('@')[0] || 'Guardián del Nido'
+          username = donacionToken.donante_username || null
+          esAnonimoConToken = true
+        }
       }
     }
 
@@ -255,9 +324,14 @@ export async function getGuardianData(token?: string): Promise<GuardianData | nu
       autenticado: true,
       esAnonimoConToken,
       usuario: {
+        id: userId,
         nombre: nombreUsuario,
         email,
         username,
+        avatar_url: avatarUrl,
+        fecha_nacimiento: fechaNacimiento,
+        telefono,
+        preferencias_contacto: preferenciasContacto,
       },
       kpis: {
         especiesApadrinadas,
@@ -336,5 +410,182 @@ export async function gestionarSuscripcionGuardian(
   } catch (err: any) {
     console.error('Error in gestionarSuscripcionGuardian:', err)
     return { success: false, error: err.message || 'Error al procesar la solicitud' }
+  }
+}
+
+export async function getHistorialGuardian(
+  email: string,
+  pagina: number = 1,
+  filtros?: { tipo?: string; desde?: string; hasta?: string }
+): Promise<HistorialResponse> {
+  try {
+    const adminSupabase = await createAdminSupabaseClient()
+    const PAGE_SIZE = 15
+
+    if (!email) {
+      return { items: [], total: 0, paginaActual: 1, totalPaginas: 1 }
+    }
+
+    const cleanEmail = email.trim().toLowerCase()
+
+    // 1. Obtener donaciones
+    const { data: donacionesData, error: donErr } = await adminSupabase
+      .from('donaciones')
+      .select('*, tarjeta:tarjetas_donacion(nombre_especie, nombre_animal)')
+      .eq('donante_email', cleanEmail)
+      .order('created_at', { ascending: false })
+
+    if (donErr) {
+      console.warn('Warning fetching donaciones for historial:', donErr.message)
+    }
+
+    // 2. Obtener compras de boletos/membresías
+    const { data: comprasData, error: compErr } = await adminSupabase
+      .from('compras')
+      .select('*, tipo_producto:tipos_producto(nombre, categoria)')
+      .order('created_at', { ascending: false })
+
+    if (compErr) {
+      console.warn('Warning fetching compras for historial:', compErr.message)
+    }
+
+    const comprasUsuario = (comprasData || []).filter(c => {
+      const meta = (c.metadata || {}) as Record<string, any>
+      return (
+        meta.cliente_email?.toLowerCase() === cleanEmail ||
+        meta.email?.toLowerCase() === cleanEmail ||
+        meta.donante_email?.toLowerCase() === cleanEmail
+      )
+    })
+
+    const historial: HistorialItem[] = []
+
+    // Mapear donaciones
+    for (const d of donacionesData || []) {
+      const tarjeta = (d.tarjeta as any)
+      const especieNombre = tarjeta?.nombre_especie || tarjeta?.nombre_animal || 'Apadrinamiento El Nido'
+      historial.push({
+        id: `don-${d.id}`,
+        fecha: d.created_at,
+        tipo: 'donacion',
+        producto: especieNombre,
+        monto: Number(d.monto) || 0,
+        estado: d.estado_suscripcion || 'completado',
+        referencia: d.stripe_subscription_id || d.stripe_session_id || d.id.slice(0, 8),
+      })
+    }
+
+    // Mapear compras
+    for (const c of comprasUsuario) {
+      const prod = (c.tipo_producto as any)
+      const esMembresia = prod?.categoria === 'membresia'
+      historial.push({
+        id: `comp-${c.id}`,
+        fecha: c.created_at,
+        tipo: esMembresia ? 'membresia' : 'boleto',
+        producto: prod?.nombre || ((c.metadata as any)?.producto_nombre) || (esMembresia ? 'Membresía Guardián' : 'Boleto de Acceso'),
+        monto: Number(c.total) || 0,
+        estado: c.estado || 'completado',
+        referencia: c.qr_code || c.stripe_session_id || c.id.slice(0, 8),
+      })
+    }
+
+    // Ordenar por fecha descendente
+    historial.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+
+    // Aplicar filtros
+    let itemsFiltrados = historial
+
+    if (filtros?.tipo && filtros.tipo !== 'todos') {
+      const t = filtros.tipo.toLowerCase()
+      itemsFiltrados = itemsFiltrados.filter(item => {
+        if (t === 'donaciones' || t === 'donacion') return item.tipo === 'donacion'
+        if (t === 'membresias' || t === 'membresia') return item.tipo === 'membresia'
+        if (t === 'boletos' || t === 'boleto') return item.tipo === 'boleto'
+        return true
+      })
+    }
+
+    if (filtros?.desde) {
+      const desdeTime = new Date(filtros.desde).getTime()
+      itemsFiltrados = itemsFiltrados.filter(item => new Date(item.fecha).getTime() >= desdeTime)
+    }
+
+    if (filtros?.hasta) {
+      const hastaTime = new Date(`${filtros.hasta}T23:59:59.999Z`).getTime()
+      itemsFiltrados = itemsFiltrados.filter(item => new Date(item.fecha).getTime() <= hastaTime)
+    }
+
+    const total = itemsFiltrados.length
+    const totalPaginas = Math.ceil(total / PAGE_SIZE) || 1
+    const paginaValida = Math.min(Math.max(1, pagina), totalPaginas)
+    const items = itemsFiltrados.slice((paginaValida - 1) * PAGE_SIZE, paginaValida * PAGE_SIZE)
+
+    return {
+      items,
+      total,
+      paginaActual: paginaValida,
+      totalPaginas,
+    }
+  } catch (err) {
+    console.error('Error in getHistorialGuardian:', err)
+    return { items: [], total: 0, paginaActual: 1, totalPaginas: 1 }
+  }
+}
+
+export async function getPerfilGuardian(email: string) {
+  try {
+    const supabase = await createAdminSupabaseClient()
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('email', email.trim().toLowerCase())
+      .maybeSingle()
+    return { data, error: error?.message }
+  } catch (err: any) {
+    return { data: null, error: err.message }
+  }
+}
+
+export async function actualizarPerfil(datos: {
+  email: string
+  nombre: string
+  fecha_nacimiento: string | null
+  telefono: string | null
+  preferencias_contacto: { email: boolean; whatsapp: boolean }
+  avatar_url?: string | null
+}) {
+  try {
+    const supabase = await createAdminSupabaseClient()
+    const cleanEmail = datos.email.trim().toLowerCase()
+
+    const updatePayload: any = {
+      full_name: datos.nombre.trim(),
+      fecha_nacimiento: datos.fecha_nacimiento || null,
+      telefono: datos.telefono?.trim() || null,
+      preferencias_contacto: datos.preferencias_contacto,
+    }
+
+    if (datos.avatar_url !== undefined) {
+      updatePayload.avatar_url = datos.avatar_url
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updatePayload)
+      .eq('email', cleanEmail)
+      .select()
+      .maybeSingle()
+
+    if (error) {
+      console.error('Error actualizando perfil:', error)
+      return { success: false, error: error.message }
+    }
+
+    revalidatePath('/guardian')
+    return { success: true, data }
+  } catch (err: any) {
+    console.error('Error in actualizarPerfil:', err)
+    return { success: false, error: err.message || 'Error al guardar perfil' }
   }
 }

@@ -26,7 +26,7 @@ import {
   Eye,
   SlidersHorizontal
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatFechaMx, formatFechaHoraMx, formatFechaCorta } from '@/lib/utils';
 import type { Database } from '@/lib/database.types';
 import { loteDescuentoSchema, type LoteDescuentoInput } from '@/app/(admin)/admin/boletos/schemas';
 import {
@@ -222,10 +222,10 @@ export default function DescuentosTab() {
       c.max_descuento_monto ? `$${c.max_descuento_monto}` : 'Sin tope',
       c.usado ? 'Usado' : c.activo ? 'Disponible' : 'Inactivo',
       c.usado_por ? `"${c.usado_por}"` : 'N/A',
-      c.usado_en ? new Date(c.usado_en).toLocaleString('es-MX') : 'N/A',
-      c.fecha_inicio ? new Date(c.fecha_inicio).toLocaleDateString('es-MX') : 'Inmediato',
-      c.fecha_fin ? new Date(c.fecha_fin).toLocaleDateString('es-MX') : 'Sin expiración',
-      new Date(c.created_at).toLocaleString('es-MX'),
+      c.usado_en ? formatFechaHoraMx(c.usado_en) : 'N/A',
+      c.fecha_inicio ? formatFechaMx(c.fecha_inicio) : 'Inmediato',
+      c.fecha_fin ? formatFechaMx(c.fecha_fin) : 'Sin expiración',
+      formatFechaHoraMx(c.created_at),
     ]);
 
     const contenidoCSV = [encabezados.join(','), ...filas.map((f) => f.join(','))].join('\n');
@@ -551,7 +551,7 @@ export default function DescuentosTab() {
                                 {c.usado_por || 'Usuario anónimo'}
                               </div>
                               <div className="text-[10px] text-off-white/40">
-                                {c.usado_en ? new Date(c.usado_en).toLocaleString('es-MX') : ''}
+                                {c.usado_en ? formatFechaHoraMx(c.usado_en) : ''}
                               </div>
                             </div>
                           ) : (
@@ -563,7 +563,7 @@ export default function DescuentosTab() {
                         <td className="py-3 px-4">
                           <div className="text-[11px] text-off-white/60">
                             {c.fecha_fin ? (
-                              <span>Hasta {new Date(c.fecha_fin).toLocaleDateString('es-MX')}</span>
+                              <span>Hasta {formatFechaMx(c.fecha_fin)}</span>
                             ) : (
                               <span>Sin expiración</span>
                             )}
@@ -624,7 +624,7 @@ export default function DescuentosTab() {
                   <div>
                     <h3 className="text-base font-bold text-off-white">{lote.lote}</h3>
                     <p className="text-xs text-off-white/50">
-                      Creado el {new Date(lote.created_at).toLocaleDateString('es-MX')}
+                      Creado el {formatFechaCorta(lote.created_at)}
                     </p>
                   </div>
                   <span className="font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 text-xs">

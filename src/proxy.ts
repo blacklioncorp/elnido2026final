@@ -136,9 +136,10 @@ export async function proxy(request: NextRequest) {
     await logAccess(queryClient, user.email ?? 'unknown', true)
   }
 
-  // Rutas de guardian: requiere sesión activa
-  if (GUARDIAN_ROUTES.some(r => pathname.startsWith(r))) {
-    if (!user) return NextResponse.redirect(new URL('/login', request.url))
+  // Rutas de guardian: requiere sesión activa o token de acceso (excluye /guardian-info que es pública)
+  if (pathname.startsWith('/guardian') && !pathname.startsWith('/guardian-info')) {
+    const hasToken = request.nextUrl.searchParams.has('token') || request.nextUrl.searchParams.has('session_id')
+    if (!user && !hasToken) return NextResponse.redirect(new URL('/login?redirect=/guardian', request.url))
   }
 
   return response

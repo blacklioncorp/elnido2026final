@@ -90,3 +90,69 @@ export function getOptimizedUrl(originalUrl: string | null | undefined, _size: '
     return originalUrl
   }
 }
+
+/**
+ * Formatea una fecha en formato corto mexicano (DD/MM/YYYY)
+ * Consistente en servidor y cliente para evitar hydration errors.
+ */
+export function formatFechaMx(fecha: string | Date | null | undefined): string {
+  if (!fecha) return ''
+  const d = typeof fecha === 'string' ? new Date(fecha) : fecha
+  if (isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('es-MX', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'America/Mexico_City',
+  }).format(d)
+}
+
+/**
+ * Formatea una fecha en formato largo mexicano (DD de MMMM de YYYY)
+ * Consistente en servidor y cliente para evitar hydration errors.
+ */
+export function formatFechaLargaMx(fecha: string | Date | null | undefined): string {
+  if (!fecha) return ''
+  const d = typeof fecha === 'string' ? new Date(fecha) : fecha
+  if (isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('es-MX', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'America/Mexico_City',
+  }).format(d)
+}
+
+/**
+ * Formatea una fecha y hora en formato mexicano (DD/MM/YYYY HH:MM)
+ * Consistente en servidor y cliente para evitar hydration errors.
+ */
+export function formatFechaHoraMx(fecha: string | Date | null | undefined): string {
+  if (!fecha) return ''
+  const d = typeof fecha === 'string' ? new Date(fecha) : fecha
+  if (isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('es-MX', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/Mexico_City',
+  }).format(d)
+}
+
+/**
+ * Formatea una fecha en formato compacto mexicano (DD MMM YYYY, ej: 14 ago 2026)
+ * Consistente en servidor y cliente para evitar hydration errors.
+ */
+export function formatFechaCorta(fecha: string | Date | null | undefined): string {
+  if (!fecha) return ''
+  const d = typeof fecha === 'string' ? new Date(fecha) : fecha
+  if (isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('es-MX', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'America/Mexico_City',
+  }).format(d)
+}

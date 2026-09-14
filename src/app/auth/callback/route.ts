@@ -30,17 +30,36 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error && data.user) {
-      // Redirigir segun rol
       const adminSupabase = await createAdminSupabaseClient()
+
+      // 1. Vincular donaciones previas realizadas con este email al user_id
+      if (data.user.email) {
+        try {
+          await adminSupabase
+            .from('donaciones')
+            .update({ user_id: data.user.id })
+            .eq('donante_email', data.user.email)
+            .is('user_id', null)
+        } catch (linkErr) {
+          console.error('Error vinculando donaciones en auth callback:', linkErr)
+        }
+      }
+
+      // 2. Redirigir según rol o parámetro next
       const { data: perfil } = await adminSupabase
         .from('profiles')
         .select('role, admin_role')
         .eq('id', data.user.id)
-        .single()
+        .maybeSingle()
 
       if (perfil?.admin_role || perfil?.role === 'super_admin' || perfil?.role === 'admin') {
         return NextResponse.redirect(new URL('/admin', request.url))
       }
+
+      if (next && next !== '/' && next.startsWith('/')) {
+        return NextResponse.redirect(new URL(next, request.url))
+      }
+
       return NextResponse.redirect(new URL('/guardian', request.url))
     }
   }

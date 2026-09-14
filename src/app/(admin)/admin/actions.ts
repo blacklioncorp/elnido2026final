@@ -199,10 +199,11 @@ export async function getDashboardData(): Promise<{
     if (diffDias === 1) return 'Ayer'
     if (diffDias < 7) return `Hace ${diffDias} días`
 
-    return date.toLocaleDateString('es-MX', {
+    return new Intl.DateTimeFormat('es-MX', {
       day: 'numeric',
       month: 'short',
-    })
+      timeZone: 'America/Mexico_City',
+    }).format(date)
   }
 
   const recentActivity: ActividadItem[] = actividadCombinada.map(item => ({
