@@ -37,7 +37,7 @@ export default async function SpeciePage({ params, searchParams }: Props) {
   const { slug } = await params
   const { donar, origen } = await searchParams
   const esOrigenQR = origen === 'qr'
-  const abrirDonacion = donar === 'true' || esOrigenQR
+  const abrirDonacion = donar === 'true' // El QR NO abre el modal automáticamente
 
   // Intentar Supabase primero
   let dbEspecie: any = null
