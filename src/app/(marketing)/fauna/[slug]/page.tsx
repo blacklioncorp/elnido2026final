@@ -1,22 +1,43 @@
+import type { Metadata } from 'next'
 import { species } from '@/lib/species'
 import { IUCN_LABELS, IUCN_COLORS } from '@/lib/iucn'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatDate } from '@/lib/utils'
 import Image from 'next/image'
 import LightboxImage from '@/components/ui/LightboxImage'
 import { getOptimizedUrl } from '@/lib/utils'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, MapPin, Heart, BookOpen, Calendar } from 'lucide-react'
-import { getFaunaBySlug } from '@/app/actions/fauna'
+import { ArrowLeft, MapPin, Heart, BookOpen, Calendar, Sparkles } from 'lucide-react'
+import { getFaunaBySlug, registrarEscaneoQR } from '@/app/actions/fauna'
 import { getEntradasByFauna } from '@/app/actions/bitacora'
-import { formatDate } from '@/lib/utils'
+import FaunaDonarCTA from '@/components/fauna/FaunaDonarCTA'
+import { headers } from 'next/headers'
 
-interface Props { params: Promise<{ slug: string }> }
+interface Props {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ donar?: string; origen?: string }>
+}
 
 export const dynamic = 'force-dynamic'
 
-export default async function SpeciePage({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
+  let nombre = slug
+  try {
+    const especie = await getFaunaBySlug(slug)
+    if (especie) nombre = especie.nombre
+  } catch {}
+  return {
+    title: `${nombre} — El Nido Santuario`,
+    description: `Conoce la historia de ${nombre} y únete a su conservación en El Nido.`,
+  }
+}
+
+export default async function SpeciePage({ params, searchParams }: Props) {
+  const { slug } = await params
+  const { donar, origen } = await searchParams
+  const esOrigenQR = origen === 'qr'
+  const abrirDonacion = donar === 'true' || esOrigenQR
 
   // Intentar Supabase primero
   let dbEspecie: any = null
@@ -25,6 +46,15 @@ export default async function SpeciePage({ params }: Props) {
     dbEspecie = await getFaunaBySlug(slug)
     if (dbEspecie) {
       bitacora = await getEntradasByFauna(dbEspecie.id)
+
+      // Registrar escaneo silencioso si viene de QR
+      if (esOrigenQR) {
+        const headersList = await headers()
+        const userAgent = headersList.get('user-agent')
+        const referer = headersList.get('referer')
+        // No bloqueante
+        registrarEscaneoQR(dbEspecie.id, slug, userAgent, referer).catch(() => {})
+      }
     }
   } catch { /* fallback */ }
 
@@ -68,6 +98,9 @@ export default async function SpeciePage({ params }: Props) {
       </div>
     )
   }
+
+  // Tarjeta de donación vinculada (viene del join en getFaunaBySlug)
+  const tarjetaVinculada = (dbEspecie as any).tarjeta_donacion ?? null
 
   // Vista desde Supabase
   return (
@@ -159,15 +192,16 @@ export default async function SpeciePage({ params }: Props) {
 
           {/* Sidebar — Apadrinar */}
           <div className="md:col-span-1">
-            <div className="sticky top-8 bg-forest-green-light/30 border border-white/10 rounded-2xl p-6">
-              <h3 className="text-xl font-bold text-off-white mb-2">Sé su Guardián</h3>
-              <p className="text-off-white/60 text-sm mb-6">Tu apoyo mensual financia directamente el cuidado de {dbEspecie.nombre} en El Nido.</p>
-              <Link href="/donar" className="flex items-center justify-center gap-2 w-full bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-extrabold py-4 rounded-xl transition-all duration-300 hover:scale-[1.02]">
-                <Heart className="h-5 w-5" /> Apadrinar
-              </Link>
-              <Link href="/fauna" className="flex items-center justify-center gap-2 w-full mt-3 text-off-white/50 hover:text-off-white text-sm transition-colors py-2">
-                ← Ver todas las especies
-              </Link>
+            <div className="sticky top-8 space-y-4">
+              {/* CTA principal con lógica de donación */}
+              <FaunaDonarCTA
+                especie={{
+                  nombre: dbEspecie.nombre,
+                  slug: dbEspecie.slug,
+                }}
+                tarjeta={tarjetaVinculada}
+                abrirDonacionAuto={abrirDonacion}
+              />
             </div>
           </div>
         </div>

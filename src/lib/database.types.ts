@@ -28,6 +28,41 @@ export type Database = {
         }
         Relationships: []
       }
+      escaneos_qr: {
+        Row: {
+          id: string
+          especie_id: string | null
+          especie_slug: string
+          user_agent: string | null
+          referer: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          especie_id?: string | null
+          especie_slug: string
+          user_agent?: string | null
+          referer?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          especie_id?: string | null
+          especie_slug?: string
+          user_agent?: string | null
+          referer?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'escaneos_qr_especie_id_fkey'
+            columns: ['especie_id']
+            isOneToOne: false
+            referencedRelation: 'fauna'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       profiles: {
         Row: {
           id: string

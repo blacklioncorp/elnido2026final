@@ -114,4 +114,15 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
         *   *Sección 3 (Apadrinar mientras tanto):* Fondo `bg-quetzal-blue/10` con invitación a apadrinar desde $50/mes y botón a `/donativos`.
         *   *Sección 4 (¿Ya eres Guardián?):* Fondo `forest-green-dark` con accesos rápidos para Iniciar Sesión (`/login`) y Ver mi Dashboard (`/guardian`).
     *   *Enlace en Footer (`Footer.tsx`):* Enlace a "Programa Guardián" añadido dentro de la sección "Apoyar".
+*   **Generador de Códigos QR por Especie y Tracking de Escaneos In-Situ (`/admin/fauna` & `/fauna/[slug]`):**
+    *   *Panel de Administración (`FaunaAdminClient.tsx` & `QRModal.tsx`):*
+        *   Tarjetas de métricas superiores con Total de Escaneos del Mes, Total Histórico Global y Especie Más Escaneada.
+        *   Columna y botón "Ver QR" con conteo dinámico de escaneos por especie.
+        *   Modal simplificado (`QRModal.tsx`) con código QR de alta resolución apuntando a `/fauna/[slug]?origen=qr`, contador de escaneos registrados, botón de copia de URL, descarga de PNG (600px) e impresión directa de cartel tamaño carta para recinto.
+    *   *Tracking de Escaneos (`escaneos_qr`):*
+        *   Registro no bloqueante de visitas vía QR en la tabla `escaneos_qr` (con `especie_id`, `especie_slug`, `user_agent`, `referer`).
+    *   *Página Pública de Especie (`/fauna/[slug]` & `FaunaDonarCTA.tsx`):*
+        *   Detección reactiva de `?origen=qr` o `?donar=true` cuando el visitante escanea el QR en el recinto, activando el flujo de donación y apadrinamiento directo.
+
+
 
