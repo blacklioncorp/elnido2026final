@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import { species } from '@/lib/species'
 import { IUCN_LABELS, IUCN_COLORS } from '@/lib/iucn'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import Image from 'next/image'
 import LightboxImage from '@/components/ui/LightboxImage'
 import { getOptimizedUrl } from '@/lib/utils'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, MapPin, Heart, BookOpen, Calendar, Sparkles } from 'lucide-react'
+import { ArrowLeft, MapPin, BookOpen, Calendar } from 'lucide-react'
 import { getFaunaBySlug, registrarEscaneoQR } from '@/app/actions/fauna'
 import { getEntradasByFauna } from '@/app/actions/bitacora'
 import FaunaDonarCTA from '@/components/fauna/FaunaDonarCTA'
@@ -85,22 +85,18 @@ export default async function SpeciePage({ params, searchParams }: Props) {
             <div className="flex items-center gap-2 text-off-white/50 text-sm mb-8">
               <MapPin className="h-4 w-4 text-conservation-gold" />{specie.habitat}
             </div>
-            <div className="bg-forest-green-light/60 backdrop-blur-sm rounded-2xl border border-white/10 p-6">
-              <h2 className="text-2xl font-bold text-off-white mb-2">Sé su Guardián</h2>
-              <p className="text-off-white/60 text-sm mb-5">Tu apadrinamiento mensual financia directamente el cuidado del {specie.name}.</p>
-              <p className="text-conservation-gold text-3xl font-extrabold mb-5">{formatCurrency(specie.monthlyAmount)}<span className="text-off-white/40 text-sm font-normal">/mes</span></p>
-              <Link href="/donar" className="flex items-center justify-center gap-2 w-full bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-extrabold py-4 rounded-xl transition-all duration-300 hover:scale-[1.02]">
-                <Heart className="h-5 w-5" /> ¡Quiero Apadrinar!
-              </Link>
-            </div>
+            <FaunaDonarCTA
+              especie={{
+                nombre: specie.name,
+                slug: specie.id,
+              }}
+              abrirDonacionAuto={abrirDonacion}
+            />
           </div>
         </div>
       </div>
     )
   }
-
-  // Tarjeta de donación vinculada (viene del join en getFaunaBySlug)
-  const tarjetaVinculada = (dbEspecie as any).tarjeta_donacion ?? null
 
   // Vista desde Supabase
   return (
@@ -193,15 +189,19 @@ export default async function SpeciePage({ params, searchParams }: Props) {
           {/* Sidebar — Apadrinar */}
           <div className="md:col-span-1">
             <div className="sticky top-8 space-y-4">
-              {/* CTA principal con lógica de donación */}
               <FaunaDonarCTA
                 especie={{
                   nombre: dbEspecie.nombre,
                   slug: dbEspecie.slug,
                 }}
-                tarjeta={tarjetaVinculada}
                 abrirDonacionAuto={abrirDonacion}
               />
+              <Link
+                href="/fauna"
+                className="flex items-center justify-center gap-2 w-full text-off-white/50 hover:text-off-white text-xs transition-colors py-2"
+              >
+                ← Ver todas las especies
+              </Link>
             </div>
           </div>
         </div>
