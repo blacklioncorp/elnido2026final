@@ -551,11 +551,8 @@ export default function GuardianDashboardClient({ initialData }: Props) {
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                  {[
-                    'Saldo para consumo en tienda',
-                    'Descuentos en eventos y talleres',
-                    'Accesos incluidos al santuario',
-                    'Beneficios exclusivos',
+                  {[                                                  
+                    'Próximamente, sorpresas exclusivas',
                   ].map((beneficio, i) => (
                     <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-conservation-gold/40 transition-colors">
                       <CheckCircle2 className="w-5 h-5 text-conservation-gold shrink-0" />

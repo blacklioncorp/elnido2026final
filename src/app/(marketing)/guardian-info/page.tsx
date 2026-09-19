@@ -14,21 +14,14 @@ const BENEFICIOS_PROXIMOS = [
     descripcion: 'Reportes clínicos, evolución nutricional y avances del cuidado diario.',
   },
   {
-    titulo: 'Acceso al mapa de liberación',
-    descripcion: 'Visualización satelital y etapas del proceso de reintroducción a su hábitat natural.',
-  },
-  {
     titulo: 'Bitácora exclusiva con fotos premium',
     descripcion: 'Galería de alta resolución y videos detrás de cámaras de nuestros cuidadores y biólogos.',
   },
   {
-    titulo: 'Descuentos en eventos y talleres',
-    descripcion: 'Entrada preferencial y beneficios en cursos de educación ambiental y visitas guiadas.',
+    titulo: 'Entre otras sorpresas',
+    descripcion: '',
   },
-  {
-    titulo: 'Saldo para consumo en tienda',
-    descripcion: 'Descuentos y créditos especiales en la tienda oficial y cafetería del santuario.',
-  },
+    
 ]
 
 export default function GuardianInfoPage() {

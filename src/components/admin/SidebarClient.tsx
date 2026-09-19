@@ -80,13 +80,15 @@ export default function SidebarClient({ userName, userEmail, adminRole }: Props)
     <>
       {/* Mobile Top Bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-14 bg-forest-green-dark border-b border-white/10 z-40 flex items-center justify-between px-4">
-        <Link href="/admin" className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md overflow-hidden flex items-center justify-center bg-off-white">
-            <Image
-              src="/images/LOGO-ELNIDO-blanco.webp"
-              alt="Icono" width={24} height={24} className="object-cover"
-            />
-          </div>
+        <Link href="/admin" className="flex items-center gap-2.5">
+          <Image
+            src="/images/logo-nido.svg"
+            alt="Icono"
+            width={28}
+            height={28}
+            className="object-contain"
+            style={{ width: 'auto', height: '28px' }}
+          />
           <span className="text-off-white font-bold leading-none text-sm">El Nido Admin</span>
         </Link>
         <button onClick={() => setIsOpen(true)} className="text-off-white/80 hover:text-white p-1">
@@ -109,15 +111,17 @@ export default function SidebarClient({ userName, userEmail, adminRole }: Props)
         {/* Logo */}
         <div className="px-6 py-6 border-b border-white/10 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
-            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-off-white">
-              <Image
-                src="/images/LOGO-ELNIDO-blanco.webp"
-                alt="Icono" width={32} height={32} className="object-cover"
-              />
-            </div>
+            <Image
+              src="/images/logo-nido.svg"
+              alt="Icono"
+              width={36}
+              height={36}
+              className="object-contain"
+              style={{ width: 'auto', height: '36px' }}
+            />
             <div>
               <p className="text-off-white font-bold leading-none">El Nido</p>
-              <p className="text-off-white/40 text-xs">Panel Admin</p>
+              <p className="text-off-white/40 text-xs mt-0.5">Panel Admin</p>
             </div>
           </Link>
           <button onClick={() => setIsOpen(false)} className="md:hidden text-off-white/50 hover:text-white">

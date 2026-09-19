@@ -25,9 +25,27 @@ export default function Footer() {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-1">
-            <Image src="/images/LOGO-ELNIDO-blanco.webp" alt="El Nido" width={100} height={36} className="mb-4 object-contain" style={{ width: 'auto', height: '36px' }} />
+            <Link href="/" className="inline-flex items-center gap-3 mb-4 group">
+              <Image
+                src="/images/logo-nido.svg"
+                alt="El Nido"
+                width={40}
+                height={40}
+                className="object-contain"
+                style={{ width: 'auto', height: '40px' }}
+              />
+              <div className="flex flex-col">
+                <span className="font-extrabold text-lg tracking-wider text-off-white leading-none">
+                  EL NIDO
+                </span>
+                <span className="text-[9px] tracking-[0.2em] text-conservation-gold font-bold uppercase leading-tight mt-0.5">
+                  Santuario de Aves
+                </span>
+              </div>
+            </Link>
             <p className="text-off-white/50 text-sm leading-relaxed">Un santuario dedicado a la conservación de la fauna mexicana en peligro de extinción.</p>
           </div>
+
 
           <div>
             <h4 className="font-semibold text-sm text-off-white uppercase tracking-widest mb-4">Explorar</h4>

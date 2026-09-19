@@ -123,6 +123,8 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
         *   Registro no bloqueante de visitas vía QR en la tabla `escaneos_qr` (con `especie_id`, `especie_slug`, `user_agent`, `referer`).
     *   *Página Pública de Especie (`/fauna/[slug]` & `FaunaDonarCTA.tsx`):*
         *   Detección reactiva de `?origen=qr` o `?donar=true` cuando el visitante escanea el QR en el recinto, activando el flujo de donación y apadrinamiento directo.
+*   **Actualización de Identidad Visual (Logo):**
+    *   Sustitución del logo en formato rasterizado (`/images/LOGO-ELNIDO-blanco.webp`) por el logotipo vectorial oficial `/images/logo-nido.svg` en Header principal ([Header.tsx](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/components/layout/Header.tsx)), Footer ([Footer.tsx](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/components/marketing/Footer.tsx)) y barra lateral del panel administrativo ([SidebarClient.tsx](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/components/admin/SidebarClient.tsx)).
 
 
 

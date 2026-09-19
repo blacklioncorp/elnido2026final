@@ -52,9 +52,26 @@ export default function Header() {
     <>
     <header className="fixed top-0 z-50 h-20 w-full bg-forest-green-dark/80 backdrop-blur-xl border-b border-white/10">
       <nav className="container mx-auto flex h-full items-center justify-between px-4">
-        <Link href="/" className="flex-shrink-0">
-          <Image src="/images/LOGO-ELNIDO-blanco.webp" alt="El Nido" width={120} height={40} className="object-contain" style={{ width: 'auto', height: '36px' }} />
+        <Link href="/" className="flex items-center gap-2 md:gap-3 flex-shrink-0 group">
+          <Image
+            src="/images/logo-nido.svg"
+            alt="El Nido Santuario"
+            width={40}
+            height={40}
+            className="object-contain transition-transform duration-200 group-hover:scale-105"
+            style={{ width: 'auto', height: '34px' }}
+            priority
+          />
+          <div className="hidden lg:flex flex-col">
+            <span className="font-extrabold text-xl tracking-wider text-off-white leading-none">
+              EL NIDO
+            </span>
+            <span className="text-[10px] tracking-[0.2em] text-conservation-gold font-bold uppercase leading-tight mt-0.5">
+              Santuario de Aves
+            </span>
+          </div>
         </Link>
+
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map(({ href, label }) => (
             <Link
@@ -71,20 +88,21 @@ export default function Header() {
             </Link>
           ))}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <Link
             href="/boletos"
-            className="flex items-center gap-2 bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-bold text-sm py-2 px-5 rounded-full transition-all duration-200 hover:scale-105"
+            className="flex items-center gap-1.5 bg-conservation-gold hover:bg-conservation-gold/90 text-forest-green-dark font-bold text-sm py-2 px-3 md:px-5 rounded-full transition-all duration-200 hover:scale-105"
           >
             <Ticket className="h-4 w-4" />
-            Boletos
+            <span>Boletos</span>
           </Link>
           <Link 
             href="/guardian-info" 
-            className="bg-conservation-gold text-forest-green-dark px-4 py-2 rounded-full font-semibold hover:bg-conservation-gold/90 transition-all flex items-center gap-2 text-sm hover:scale-105"
+            className="hidden sm:flex bg-conservation-gold text-forest-green-dark px-4 py-2 rounded-full font-semibold hover:bg-conservation-gold/90 transition-all items-center gap-2 text-sm hover:scale-105"
           >
             <Star className="h-4 w-4" />
-            Conviértete en Guardián
+            <span className="hidden lg:inline">Conviértete en Guardián</span>
+            <span className="lg:hidden">Guardián</span>
           </Link>
           {user ? (
             <div className="hidden md:flex items-center gap-3 ml-2">
