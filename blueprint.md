@@ -123,8 +123,14 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
         *   Registro no bloqueante de visitas vía QR en la tabla `escaneos_qr` (con `especie_id`, `especie_slug`, `user_agent`, `referer`).
     *   *Página Pública de Especie (`/fauna/[slug]` & `FaunaDonarCTA.tsx`):*
         *   Detección reactiva de `?origen=qr` o `?donar=true` cuando el visitante escanea el QR en el recinto, activando el flujo de donación y apadrinamiento directo.
-*   **Actualización de Identidad Visual (Logo):**
+*   **Actualización de Identidad Visual (Logo & Favicons):**
     *   Sustitución del logo en formato rasterizado (`/images/LOGO-ELNIDO-blanco.webp`) por el logotipo vectorial oficial `/images/logo-nido.svg` en Header principal ([Header.tsx](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/components/layout/Header.tsx)), Footer ([Footer.tsx](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/components/marketing/Footer.tsx)) y barra lateral del panel administrativo ([SidebarClient.tsx](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/components/admin/SidebarClient.tsx)).
+    *   Sustitución total del favicon por defecto de Next.js por los favicons e iconos oficiales de El Nido:
+        *   Generación de `src/app/favicon.ico` y `public/favicon.ico` multi-resolución (16x16, 32x32 y 48x48) con canal alfa nítido.
+        *   Generación de `src/app/icon.png` (512x512) y `src/app/apple-icon.png` (180x180).
+        *   Generación de assets para Progressive Web App / navegadores: `public/icon-192.png`, `public/icon-512.png` y `public/apple-touch-icon.png`.
+        *   Configuración explícita del objeto `icons` en la metadata de `src/app/layout.tsx`.
+
 
 
 
