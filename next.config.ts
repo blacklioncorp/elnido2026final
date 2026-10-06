@@ -36,7 +36,33 @@ const nextConfig: NextConfig = {
           { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
         ],
       },
-    ]
+    ];
+  },
+  async redirects() {
+    return [
+      // Experiencias → Grupos
+      { source: '/experiencias-publico-en-general', destination: '/grupos', permanent: true },
+      { source: '/experiencias-escolares', destination: '/grupos', permanent: true },
+      { source: '/experiencias', destination: '/grupos', permanent: true },
+      { source: '/servicios', destination: '/grupos', permanent: true },
+      
+      // Institucional
+      { source: '/aviso-de-privacidad', destination: '/politica-de-privacidad', permanent: true },
+      { source: '/nosotros', destination: '/quienes-somos', permanent: true },
+      { source: '/Nuestro-Fundador', destination: '/quienes-somos', permanent: true },
+      { source: '/nuestro-fundador', destination: '/quienes-somos', permanent: true },
+      { source: '/fundador', destination: '/quienes-somos', permanent: true },
+      { source: '/terminos', destination: '/terminos-y-condiciones', permanent: true },
+      
+      // Fauna
+      { source: '/aves', destination: '/fauna', permanent: true },
+      { source: '/especies', destination: '/fauna', permanent: true },
+      { source: '/animales', destination: '/fauna', permanent: true },
+      
+      // Otros
+      { source: '/donaciones', destination: '/donar', permanent: true },
+      { source: '/noticias', destination: '/blog', permanent: true },
+    ];
   },
 };
 

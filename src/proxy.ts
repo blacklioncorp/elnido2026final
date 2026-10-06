@@ -26,8 +26,28 @@ const ROUTE_MODULE_MAP: Record<string, string> = {
   '/admin/cupo':         'boletos',
 }
 
+// URLs hackeadas con spam farmacéutico - Devolver 410 Gone
+const URLS_HACKEADAS = [
+  '/reservaciones',
+  '/cialis-2.5-mg-daily-review',
+  '/combantrin-o-vermox',
+  '/wp-content',
+  '/wp-admin',
+  '/wp-includes',
+  '/wp-login.php',
+  '/feed',
+]
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  if (URLS_HACKEADAS.some(url => pathname.startsWith(url))) {
+    return new NextResponse('Gone', { 
+      status: 410,
+      headers: { 'x-robots-tag': 'noindex, nofollow, noarchive' }
+    })
+  }
+
   let response = NextResponse.next({ request })
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL

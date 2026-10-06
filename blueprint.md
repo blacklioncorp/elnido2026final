@@ -130,6 +130,12 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
         *   Generación de `src/app/icon.png` (512x512) y `src/app/apple-icon.png` (180x180).
         *   Generación de assets para Progressive Web App / navegadores: `public/icon-192.png`, `public/icon-512.png` y `public/apple-touch-icon.png`.
         *   Configuración explícita del objeto `icons` en la metadata de `src/app/layout.tsx`.
+*   **Parche SEO Crítico (Desindexación de Spam WordPress, Redirecciones 301, 410 Gone, Sitemap y Robots):**
+    *   *Redirecciones 301 ([next.config.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/next.config.ts)):* Mapeo permanente de URLs legítimas del WordPress anterior hacia las rutas modernas de Next.js (`/experiencias*`, `/servicios` → `/grupos`; `/nosotros`, `/Nuestro-Fundador`, `/fundador` → `/quienes-somos`; `/aviso-de-privacidad` → `/politica-de-privacidad`; `/terminos` → `/terminos-y-condiciones`; `/aves`, `/especies`, `/animales` → `/fauna`; `/donaciones` → `/donar`; `/noticias` → `/blog`).
+    *   *Respuesta HTTP 410 Gone con `x-robots-tag: noindex, nofollow, noarchive` ([src/proxy.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/proxy.ts)):* Intercepción inmediata en el middleware para URLs infectadas con spam farmacéutico (`/reservaciones`, `/cialis-2.5-mg-daily-review`, `/combantrin-o-vermox`, `/wp-content`, `/wp-admin`, `/wp-includes`, `/wp-login.php`, `/feed`) para forzar a los motores de búsqueda a desindexarlas de forma acelerada y permanente.
+    *   *Sitemap XML Dinámico ([src/app/sitemap.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/app/sitemap.ts)):* Generación automática de `https://www.elnido.mx/sitemap.xml` con rutas estáticas institucionales, catálogo dinámico de fauna activa y posts publicados del blog desde Supabase.
+    *   *Robots.txt ([src/app/robots.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/app/robots.ts)):* Directivas de indexación que bloquean rutas administrativas, privadas y patrones de spam, enlazando el sitemap oficial.
+
 
 
 
