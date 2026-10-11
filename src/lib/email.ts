@@ -28,7 +28,7 @@ export async function enviarEmailConfirmacion(
   if (!resend) return
 
   const { to, nombre, producto, esMembresia, qrDataUrl } = params
-  const from = process.env.RESEND_FROM ?? 'El Nido <onboarding@resend.dev>'
+  const from = process.env.RESEND_FROM ?? 'El Nido <no-reply@elnido.mx>'
 
   const instruccion = esMembresia
     ? 'Preséntate en taquilla con este QR para recibir y activar tu pulsera Guardián.'

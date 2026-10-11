@@ -23,7 +23,7 @@ export async function notificarErrorAdmin(error: Error | unknown, contexto: stri
   const errorMessage = error instanceof Error ? error.message : String(error)
   const errorStack = error instanceof Error ? error.stack : ''
   const timestamp = new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })
-  const from = process.env.RESEND_FROM ?? 'El Nido <onboarding@resend.dev>'
+  const from = process.env.RESEND_FROM ?? 'El Nido <no-reply@elnido.mx>'
 
   const html = `
     <div style="font-family:Inter,Arial,sans-serif;background:#0B2B26;color:#F7F3E8;padding:28px;border-radius:14px;max-width:600px;margin:auto">

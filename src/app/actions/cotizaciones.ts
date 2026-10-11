@@ -102,7 +102,7 @@ export async function enviarCotizacion(prevState: unknown, formData: FormData) {
     const resendKey = process.env.RESEND_API_KEY
     if (resendKey) {
       const resend = new Resend(resendKey)
-      const from = process.env.RESEND_FROM ?? 'El Nido <onboarding@resend.dev>'
+      const from = process.env.RESEND_FROM ?? 'El Nido <no-reply@elnido.mx>'
       
       const { 
         cliente_nombre, cliente_email, cliente_telefono, escuela, personas, fecha_deseada,

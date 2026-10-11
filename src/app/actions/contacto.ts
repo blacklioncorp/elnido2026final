@@ -42,7 +42,7 @@ export async function enviarMensajeContacto(formData: FormData) {
 
     // TODO: Ajustar el correo de envío ('from') cuando se tenga el dominio verificado
     const { data: emailData, error } = await resend.emails.send({
-      from: 'Contacto El Nido <onboarding@resend.dev>',
+      from: process.env.RESEND_FROM ?? 'El Nido <no-reply@elnido.mx>',
       to: adminEmail,
       subject: `Nuevo mensaje de contacto: ${subject}`,
       html: `
