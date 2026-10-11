@@ -124,7 +124,7 @@ export async function enviarCotizacion(prevState: unknown, formData: FormData) {
       // 1. Email al Santuario
       await resend.emails.send({
         from,
-        to: process.env.ADMIN_EMAIL ?? 'admin@elnido.mx', // Reemplazar con el email real o variable de entorno
+        to: process.env.ADMIN_EMAIL || 'elnidosantuario@gmail.com',
         subject: `Nueva solicitud de cotización - ${paquete.nombre} - ${escuela}`,
         html: `
           <h2>Nueva solicitud de cotización para Grupos</h2>

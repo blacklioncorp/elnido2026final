@@ -135,6 +135,18 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
     *   *Respuesta HTTP 410 Gone con `x-robots-tag: noindex, nofollow, noarchive` ([src/proxy.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/proxy.ts)):* Intercepción inmediata en el middleware para URLs infectadas con spam farmacéutico (`/reservaciones`, `/cialis-2.5-mg-daily-review`, `/combantrin-o-vermox`, `/wp-content`, `/wp-admin`, `/wp-includes`, `/wp-login.php`, `/feed`) para forzar a los motores de búsqueda a desindexarlas de forma acelerada y permanente.
     *   *Sitemap XML Dinámico ([src/app/sitemap.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/app/sitemap.ts)):* Generación automática de `https://www.elnido.mx/sitemap.xml` con rutas estáticas institucionales, catálogo dinámico de fauna activa y posts publicados del blog desde Supabase.
     *   *Robots.txt ([src/app/robots.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/app/robots.ts)):* Directivas de indexación que bloquean rutas administrativas, privadas y patrones de spam, enlazando el sitemap oficial.
+*   **Parche Temporal: Actualización de Correo de Contacto a Gmail (`elnidosantuario@gmail.com`):**
+    *   *Motivo:* Caída temporal en la recepción del servicio de correo institucional `@elnido.mx`.
+    *   *Objetivo:* Migrar los puntos de contacto y recepción hacia `elnidosantuario@gmail.com` usando la variable de entorno `ADMIN_EMAIL` con fallback seguro, sin alterar el remitente saliente `RESEND_FROM` (`no-reply@elnido.mx`).
+    *   *Plan de Acción:*
+        1. `/src/app/(marketing)/contacto/page.tsx`: Actualizar el correo visible en la tarjeta informativa de contacto a `elnidosantuario@gmail.com`.
+        2. `/src/app/actions/contacto.ts`: Usar `process.env.ADMIN_EMAIL || 'elnidosantuario@gmail.com'` como destinatario del formulario de contacto.
+        3. `/src/app/(marketing)/politica-de-privacidad/page.tsx`: Reemplazar los enlaces y menciones de correo de datos personales por `elnidosantuario@gmail.com`.
+        4. `/src/app/(marketing)/terminos-y-condiciones/page.tsx`: Reemplazar el correo de contacto legal por `elnidosantuario@gmail.com`.
+        5. `/src/lib/notifications.ts`: Asignar `process.env.ADMIN_EMAIL || 'elnidosantuario@gmail.com'` como destinatario de alertas críticas de error.
+        6. `/src/app/actions/cotizaciones.ts`: Usar `process.env.ADMIN_EMAIL || 'elnidosantuario@gmail.com'` como destinatario de las notificaciones al santuario.
+        7. `/src/components/marketing/Footer.tsx`: Verificar y asegurar que no existan correos `@elnido.mx` huérfanos.
+        8. Ejecutar `npm run build` y validaciones para garantizar integridad sin errores.
 
 
 

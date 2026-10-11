@@ -101,7 +101,7 @@ export default function Footer() {
         </div>
         
         <div className="mt-8 text-center text-sm text-muted-foreground opacity-50">
-          <p className="italic">"Servir a la vida, protegerla."</p>
+          <p className="italic">&ldquo;Servir a la vida, protegerla.&rdquo;</p>
           <p className="mt-1">— Dr. Jesús Estudillo López</p>
         </div>
       </div>

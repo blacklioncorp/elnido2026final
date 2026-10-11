@@ -73,7 +73,7 @@ export default function TerminosYCondicionesPage() {
             </div>
 
             <div className="pt-8 border-t border-white/10 text-sm text-off-white/50 text-center">
-              Si tienes dudas acerca de los Términos y Condiciones, por favor contáctanos en <a href="mailto:legal@elnido.org.mx" className="text-quetzal-blue hover:underline">legal@elnido.org.mx</a>
+              Si tienes dudas acerca de los Términos y Condiciones, por favor contáctanos en <a href="mailto:elnidosantuario@gmail.com" className="text-quetzal-blue hover:underline">elnidosantuario@gmail.com</a>
             </div>
 
           </div>

@@ -9,7 +9,7 @@ function getResend(): Resend | null {
   return _resend
 }
 
-const FROM = process.env.RESEND_FROM ?? 'El Nido <onboarding@resend.dev>'
+const FROM = process.env.RESEND_FROM ?? 'El Nido <no-reply@elnido.mx>'
 
 /**
  * Confirmation email sent immediately to an individual donor.

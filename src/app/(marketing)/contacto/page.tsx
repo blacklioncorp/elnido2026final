@@ -52,7 +52,7 @@ export default function ContactoPage() {
         {/* Info */}
         <div className="lg:col-span-2 space-y-8">
           {[
-            { icon: Mail, label: 'Correo', value: 'info@elnido.mx' },
+            { icon: Mail, label: 'Correo', value: 'elnidosantuario@gmail.com' },
             { icon: Phone, label: 'Teléfono', value: '(56) 2160 0230' },
             { icon: MapPin, label: 'Ubicación', value: 'Calle Progreso s/n esquina av. Acozac, Ixtapaluca Centro, Ixtapaluca, Estado de México.' },
           ].map(({ icon: Icon, label, value }) => (

@@ -38,11 +38,12 @@ export async function enviarMensajeContacto(formData: FormData) {
     }
 
     const { name, email, subject, message } = validatedFields.data
+    const adminEmail = process.env.ADMIN_EMAIL || 'elnidosantuario@gmail.com'
 
     // TODO: Ajustar el correo de envío ('from') cuando se tenga el dominio verificado
     const { data: emailData, error } = await resend.emails.send({
       from: 'Contacto El Nido <onboarding@resend.dev>',
-      to: 'info@elnido.mx', // Aquí puedes poner el correo donde quieres recibir los mensajes
+      to: adminEmail,
       subject: `Nuevo mensaje de contacto: ${subject}`,
       html: `
         <h2>Nuevo mensaje de contacto desde la web</h2>

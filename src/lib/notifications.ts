@@ -14,7 +14,7 @@ function getResend(): Resend | null {
  * Best-effort: nunca interrumpe el flujo principal si el envío falla.
  */
 export async function notificarErrorAdmin(error: Error | unknown, contexto: string): Promise<void> {
-  const adminEmail = process.env.ADMIN_EMAIL
+  const adminEmail = process.env.ADMIN_EMAIL || 'elnidosantuario@gmail.com'
   if (!adminEmail) return
 
   const resend = getResend()
