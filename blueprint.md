@@ -147,6 +147,10 @@ El Nido is a web application for a fictional wildlife sanctuary in Mexico. The a
         6. `/src/app/actions/cotizaciones.ts`: Usar `process.env.ADMIN_EMAIL || 'elnidosantuario@gmail.com'` como destinatario de las notificaciones al santuario.
         7. `/src/components/marketing/Footer.tsx`: Verificar y asegurar que no existan correos `@elnido.mx` huérfanos.
         8. Ejecutar `npm run build` y validaciones para garantizar integridad sin errores.
+*   **Corrección de Actualización de Estado de Cotizaciones (`/admin/grupos`):**
+    *   *Problema:* Al cambiar el estado de una cotización desde la pestaña "Cotizaciones Recibidas", la llamada `PATCH` directa al endpoint REST de Supabase fallaba con `400 Bad Request (PGRST204: not allowed by policy)` debido a que las políticas de Row Level Security (RLS) bloquean la mutación directa desde el cliente navegador con anon key / auth session.
+    *   *Solución:* Se creó la Server Action `updateCotizacionEstado` en [src/app/actions/grupos.ts](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/app/actions/grupos.ts) utilizando `createAdminSupabaseClient()` con permisos administrativos de service role y revalidación de ruta (`/admin/grupos`). Se conectó [src/components/admin/GruposAdminClient.tsx](file:///Users/adrianmendoza/Downloads/elnido2026-final/src/components/admin/GruposAdminClient.tsx) para invocar esta Server Action de manera segura y transparente.
+
 
 
 

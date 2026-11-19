@@ -197,3 +197,25 @@ export async function deletePaquete(id: string): Promise<PaqueteResult> {
     return { error: err.message || 'Error inesperado al eliminar paquete' }
   }
 }
+
+export async function updateCotizacionEstado(id: string, nuevoEstado: 'pendiente' | 'respondida' | 'confirmada' | 'cancelada'): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createAdminSupabaseClient()
+    const { error } = await supabase
+      .from('cotizaciones')
+      .update({ estado: nuevoEstado, updated_at: new Date().toISOString() })
+      .eq('id', id)
+
+    if (error) {
+      console.error('Error actualizando estado de cotización:', error)
+      return { success: false, error: error.message }
+    }
+
+    revalidatePath('/admin/grupos')
+    return { success: true }
+  } catch (err: any) {
+    console.error('Error inesperado en updateCotizacionEstado:', err)
+    return { success: false, error: err.message || 'Error inesperado al actualizar estado' }
+  }
+}
+

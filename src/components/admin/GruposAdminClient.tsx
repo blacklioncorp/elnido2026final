@@ -18,6 +18,7 @@ import {
   deletePaquete, 
   togglePaqueteActivo, 
   uploadPaqueteImagen,
+  updateCotizacionEstado,
   type PaqueteInput 
 } from '@/app/actions/grupos'
 import { compressImageClient } from '@/lib/client-image-compression'
@@ -269,17 +270,15 @@ export default function GruposAdminClient({ initialPaquetes, initialCotizaciones
   // --- Cotizaciones Handler ---
   const handleStatusChange = async (id: string, nuevoEstado: EstadoCotizacion) => {
     try {
-      const { error } = await supabase
-        .from('cotizaciones')
-        .update({ estado: nuevoEstado, updated_at: new Date().toISOString() })
-        .eq('id', id)
-
-      if (error) throw error
+      const res = await updateCotizacionEstado(id, nuevoEstado)
+      if (!res.success) {
+        throw new Error(res.error || 'Error al actualizar')
+      }
 
       setCotizaciones(prev => prev.map(c => c.id === id ? { ...c, estado: nuevoEstado } : c))
       toast.success('Estado de cotización actualizado')
-    } catch (error) {
-      toast.error('Error al actualizar estado')
+    } catch (error: any) {
+      toast.error(error.message || 'Error al actualizar estado')
     }
   }
 
