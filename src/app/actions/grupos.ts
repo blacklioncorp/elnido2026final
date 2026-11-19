@@ -203,7 +203,7 @@ export async function updateCotizacionEstado(id: string, nuevoEstado: 'pendiente
     const supabase = await createAdminSupabaseClient()
     const { error } = await supabase
       .from('cotizaciones')
-      .update({ estado: nuevoEstado, updated_at: new Date().toISOString() })
+      .update({ estado: nuevoEstado })
       .eq('id', id)
 
     if (error) {
